@@ -488,7 +488,7 @@ def addToCompare(request):
             Compare.objects.filter(mobile = model_object).delete()
             # print("Deletde")
             return JsonResponse({'flag':"no",'cur': Compare.objects.count()},status=200)
-        elif len(Compare.objects.all()) == 4:
+        elif len(Compare.objects.filter(username=user_object)) == 4:
             return JsonResponse({'flag':"full",'cur': Compare.objects.count()},status=200)
         else:
             # print("Added")
