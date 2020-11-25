@@ -1,0 +1,431 @@
+{% extends 'home/default.html' %}
+
+{% block content %}  
+<div class="section section-hero section-shaped" >
+    <div class="shape shape-style-3 shape-default" style="height: 480px;">
+        <span class="span-150"></span>
+        <span class="span-50"></span>
+        <span class="span-50"></span>
+        <span class="span-75"></span>
+        <span class="span-100"></span>
+        <span class="span-75"></span>
+        <span class="span-50"></span>
+        <span class="span-100"></span>
+        <span class="span-50"></span>
+        <span class="span-100"></span>
+    </div>
+    <div class="page-header">
+        <br>
+        <div id="search-bar">
+            <center>
+                <form autocomplete="off" action="" method="post">
+                    {% csrf_token %}
+                    <div class="autocomplete">
+                    <input type="text" id="search_bar" name="search_text" placeholder="{{search_text}}" >
+                    </div>
+                    <input type="submit" id="search_button" name="search_bar" value="Search">
+                </form>
+            </center>
+            <script>
+                function autocomplete(inp, data) {
+                    /*the autocomplete function takes two arguments,
+                    the text field element and an array of possible autocompleted values:*/
+                    var currentFocus;
+                    /*execute a function when someone writes in the text field:*/
+                    inp.addEventListener("input", function (e) {
+                        var a, b, i, val = this.value;
+                        /*close any already open lists of autocompleted values*/
+                        closeAllLists();
+                        if (!val) {
+                            return false;
+                        }
+                        currentFocus = -1;
+                        /*create a DIV element that will contain the items (values):*/
+                        a = document.createElement("DIV");
+                        a.setAttribute("id", this.id + "autocomplete-list");
+                        a.setAttribute("class", "autocomplete-items");
+                        /*append the DIV element as a child of the autocomplete container:*/
+                        this.parentNode.appendChild(a);
+                        var f=0;
+                        /*for each item in the array...*/
+
+                        for (x in data["data"]) {
+                            if(f>7)
+                                break;
+                            /*check if the item starts with the same letters as the text field value:*/
+
+                            if (data["data"][x].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                                f++;
+
+                                /*create a DIV element for each matching element:*/
+                                b = document.createElement("DIV");
+                                /*make the matching letters bold:*/
+                                b.innerHTML = "<strong>" + data["data"][x].substr(0, val.length) + "</strong>";
+                                b.innerHTML += data["data"][x].substr(val.length);
+                                /*insert a input field that will hold the current array item's value:*/
+                                b.innerHTML += "<input type='hidden' value='" + data["data"][x] + "'>";
+                                /*execute a function when someone clicks on the item value (DIV element):*/
+                                b.addEventListener("click", function (e) {
+                                    /*insert the value for the autocomplete text field:*/
+                                    inp.value = this.getElementsByTagName("input")[0].value;
+                                    /*close the list of autocompleted values,
+                                    (or any other open lists of autocompleted values:*/
+                                    closeAllLists();
+                                });
+                                a.appendChild(b);
+                            }
+                        }
+                    });
+                    /*execute a function presses a key on the keyboard:*/
+                    inp.addEventListener("keydown", function (e) {
+                        var x = document.getElementById(this.id + "autocomplete-list");
+                        if (x) x = x.getElementsByTagName("div");
+                        if (e.keyCode == 40) {
+                            /*If the arrow DOWN key is pressed,
+                            increase the currentFocus variable:*/
+                            currentFocus++;
+                            /*and and make the current item more visible:*/
+                            addActive(x);
+                        } else if (e.keyCode == 38) { //up
+                            /*If the arrow UP key is pressed,
+                            decrease the currentFocus variable:*/
+                            currentFocus--;
+                            /*and and make the current item more visible:*/
+                            addActive(x);
+                        } else if (e.keyCode == 13) {
+                            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                            e.preventDefault();
+                            if (currentFocus > -1) {
+                                /*and simulate a click on the "active" item:*/
+                                if (x) x[currentFocus].click();
+                            }
+                        }
+                    });
+
+                    function addActive(x) {
+                        /*a function to classify an item as "active":*/
+                        if (!x) return false;
+                        /*start by removing the "active" class on all items:*/
+                        removeActive(x);
+                        if (currentFocus >= x.length) currentFocus = 0;
+                        if (currentFocus < 0) currentFocus = (x.length - 1);
+                        /*add class "autocomplete-active":*/
+                        x[currentFocus].classList.add("autocomplete-active");
+                    }
+
+                    function removeActive(x) {
+                        /*a function to remove the "active" class from all autocomplete items:*/
+                        for (var i = 0; i < x.length; i++) {
+                            x[i].classList.remove("autocomplete-active");
+                        }
+                    }
+
+                    function closeAllLists(elmnt) {
+                        /*close all autocomplete lists in the document,
+                        except the one passed as an argument:*/
+                        var x = document.getElementsByClassName("autocomplete-items");
+                        for (var i = 0; i < x.length; i++) {
+                            if (elmnt != x[i] && elmnt != inp) {
+                                x[i].parentNode.removeChild(x[i]);
+                            }
+                        }
+                    }
+
+                    /*execute a function when someone clicks in the document:*/
+                    document.addEventListener("click", function (e) {
+                        closeAllLists(e.target);
+                    });
+                }
+                var data = JSON.parse("{{ list|escapejs }}");
+                autocomplete(document.getElementById("search_bar"), data);
+            </script>
+        </div>
+        <div class="container shape-container d-flex align-items-center py-lg">
+            <div class="col px-0">
+                <div class="row align-items-center justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <h1 class="text-white display-1">{{search_text}}</h1>
+                </div>
+                </div>
+            </div>       
+        </div>
+    </div>
+    
+</div>
+
+    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Showing {{size}} results</h5>
+    <div class="" style="padding:15px;">
+        <div id="compare_cart" style="
+            right:0;
+            margin-right:20px;
+            top:80;
+            position : fixed;         
+            z-index: 1000;
+            display:none;
+        ">
+            <a onclick="makeList()" href="compare?ids=" class="notification" id="compare_button">
+                <span>Compare</span>
+                <span class="badge" id="no_of_items">0</span>
+            </a>
+        </div>
+        <div id="asy_message" style="
+            position : fixed;         
+            z-index: 1000;
+            display:none;
+        ">
+            <span id="msg"></span>
+        </div>
+    
+        <div id="products" class="row view-group" style="padding:10px;">
+            {% for model,link,pk,compare_status,fav_status in result %}
+            <div class="item col-md-3 col-sm-6">
+                {% if compare_status == "Remove from Compare" or fav_status == "Remove from Favourites" %}
+                    <div class="thumbnail card" id="box{{pk}}" style="border:2px solid pink; box-shadow: 0 0 5px 2px pink;">
+                    {% else%}
+                    <div class="thumbnail card" id="box{{pk}}">
+                {% endif %}
+                    <center>
+                        <h5 id="model" class="group card-title inner list-group-item-heading">
+                            {{model}}
+                        </h5>
+                    </center>
+                    {% if link == "Not Found" %}
+                        <div class="img-event">
+                            <center><img class="group list-group-image img-fluid" src="https://i.postimg.cc/gcHQcNYk/default.jpg" alt=".."/></center>
+                        </div>
+                    {% else %}
+                        <div class="img-event">
+                            <center><img class="group list-group-image img-fluid" src="{{link}}" alt=""/></center>
+                        </div>
+                    {% endif %}
+                    <div class="caption card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <center>
+                                    <a class="btn item_btn" style="width: 60%" name="name" href="view?model={{pk}}">View</a>
+                                    {% if login_flag %}
+                                        <div class="btn-group dropup">
+                                            <button type="button" class="btn dropdown-toggle item_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <!-- <a class="dropdown-item" href="#" id="{{pk}}" onclick="addToFavourite(this.id)">Add to favourite</a> -->
+                                                <button class="dropdown-item" href="#" id="{{pk}}" onclick="addToFavourite(this.id)">
+                                                    <!-- <input class="check" id="checkbox{{pk}}" type="checkbox"/> -->
+                                                    <span id="model1{{pk}}"> &nbsp;{{fav_status}}</span>
+                                                </button>
+                                                <button class="dropdown-item" href="#" id="{{pk}}" onclick="addToCompare(this.id)">
+                                                    <!-- <input class="check" id="checkbox{{pk}}" type="checkbox"/> -->
+                                                    <span id="model{{pk}}"> &nbsp;{{compare_status}}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endif%}
+                                </center>        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    <!-- Javascript -->
+
+    <script>
+        var flag=0;
+        function showIt()
+        {
+            if(flag==0)
+            {
+                document.getElementById("search-bar").style.display = "block";
+                flag=1;
+            }
+            else
+            {
+                flag=0;
+                document.getElementById("search-bar").style.display = "none";
+            }    
+        }
+        
+        /*
+        var vis = [];
+
+        function addToCompare(id)
+        {
+            var msg="";
+            if(vis.includes(id) == true)
+            {
+                for (var i = vis.length; i--;)
+                {
+                    if (vis[i] === id) 
+                    {
+                        vis.splice(i, 1);
+                    }
+                }
+                msg="Removed from compare";
+                document.getElementById("box"+id).style.border = "1px solid #bdbaba";
+                document.getElementById("model"+id).innerHTML = "Add to compare";
+                document.getElementById("checkbox"+id).checked = false;
+                //  alert("included "+ vis.includes(id));
+            }
+            else
+            {
+                if(vis.length == 4)
+                {
+                    alert("You can add upto 4 items");
+                    document.getElementById("checkbox"+id).checked = false;
+                }
+                else
+                {        
+                    msg="Added to compare";
+                    vis.push(id);
+                    document.getElementById("checkbox"+id).checked = true;
+                    document.getElementById("box"+id).style.border = "3px solid black";
+                    document.getElementById("model"+id).innerHTML = "Remove from comapre";
+                //    alert("added-"+id+"-"+{{size}}+"-"+vis.length+'-'+vis.includes(id));    
+                }
+            }
+            if(vis.length>0)
+            {
+                document.getElementById("compare_cart").style.display = "block";
+                document.getElementById("no_of_items").innerHTML = vis.length;
+            } 
+            else
+            {
+                document.getElementById("compare_cart").style.display = "none";
+            }
+            
+            // displays asynchronous alert message
+            
+            if(msg!="")
+            {
+                document.getElementById("asy_message").style.marginLeft = "2%";
+                document.getElementById("asy_message").style.display = "block";
+                document.getElementById("asy_message").innerHTML = "<i style='font-size:20px;' class='fa fa-check-circle' aria-hidden='true'></i> &nbsp;" + msg;
+                setTimeout(function()
+                    {
+                        document.getElementById("asy_message").style.display = "none";
+                    },1500);
+            }
+        }
+        */
+        function makeList()
+        {
+            var ids = "";
+            for(var i =0;i<vis.length-1;i++)
+                ids+=vis[i]+'-';
+            ids += vis[vis.length-1];
+            document.getElementById("compare_button").href = "compare?ids="+ids;
+            alert(ids);
+        }
+        
+        function addToCompare(id)
+        {
+            $.ajax({
+                type:'POST',
+                url:'{% url 'add-to-compare' %}',
+                data:{
+                    pri_key:id,
+                },
+                success:function(response)
+                {
+                    var flag = response['flag'];
+                    var cur = response['cur'];
+                    if(flag == 'no')
+                    {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Removed from compare !',
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                       // alert("Removed from compare");
+                        //$("#box"+id).css("border", "1px solid #bdbaba");
+                        //$("#box"+id).css("box-shadow", "none");
+                        $("#model"+id).html("Add to Compare");
+                    }
+                    else if(flag == 'yes')
+                    {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to compare !',
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                        //alert("Added to compare");
+                        //$("#box"+id).css("border", "2px solid pink");
+                       // $("#box"+id).css("box-shadow","0 0 5px 2px pink");
+                        $("#model"+id).html("Remove From Compare");
+                    }
+                    else
+                    {
+                        Swal.fire(
+                            'You can add up to 4 items !',
+                            '',
+                            'info'
+                            )
+                        //alert("You can add up to 4 items");
+                    }
+                    /*
+                    if(cur>0)
+                    {
+                        $("#compare_cart").css("display", "block");
+                        $("#no_of_items").html(cur);
+                    }
+                    else
+                    {
+                        $("#compare_cart").css("display", "none");
+                    }*/
+                },
+                error:function(response){
+                    alert(response["responseJSON"]["error"]);
+                }
+            });            
+        }
+        function addToFavourite(id)
+        {
+            $.ajax({
+                type:'POST',
+                url:'{% url 'add-to-favourite' %}',
+                data:{
+                    pri_key:id,
+                },
+                success:function(response)
+                {
+                    var flag = response['flag'];
+                    if(flag == 'no')
+                    {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Removed from Favourites !',
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                        //alert("Removed from favourites");
+                        //$("#box"+id).css("border", "1px solid #bdbaba");
+                       // $("#box"+id).css("box-shadow", "none");
+                        $("#model1"+id).html("Add to Favourites");
+                    }
+                    else if(flag == 'yes')
+                    {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to Favourites !',
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                        //alert("Added to favourites");
+                        //$("#box"+id).css("border", "2px solid pink");
+                       // $("#box"+id).css("box-shadow","0 0 5px 2px pink");
+                        $("#model1"+id).html("Remove From Favourites");
+                    }
+                },
+                error:function(response){
+                    alert(response["responseJSON"]["error"]);
+                }
+            });            
+        }
+    </script>
+{% endblock %}
+    

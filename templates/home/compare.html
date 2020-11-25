@@ -1,0 +1,133 @@
+{% extends 'home/default.html' %}
+
+{% block content %}
+    <div class="section section-hero section-shaped" >
+        <div class="shape shape-style-3 shape-default" style="height: 480px;">
+            <span class="span-150"></span>
+            <span class="span-50"></span>
+            <span class="span-50"></span>
+            <span class="span-75"></span>
+            <span class="span-100"></span>
+            <span class="span-75"></span>
+            <span class="span-50"></span>
+            <span class="span-100"></span>
+            <span class="span-50"></span>
+            <span class="span-100"></span>
+        </div>
+        <div class="page-header">
+            <br>
+            <div id="search-bar">
+                <center>
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="text" id="search_bar" name="search_text" placeholder="{{search_text}}" >    
+                        <input type="submit" id="search_button" name="search_bar" value="Search">
+                    </form>
+                </center>
+            </div>
+            <div class="container shape-container d-flex align-items-center py-lg">
+                <div class="col px-0">
+                    <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h1 class="text-white display-1">Comparison By Specifications</h1>
+                    </div>
+                    </div>
+                </div>       
+            </div>
+        </div>
+        
+    </div>
+    {% if size == 0 %}
+        <center>
+            <img src='https://i.postimg.cc/rF0V5GrJ/cart-empty-5c96f1288723a071b2ede090a175481a.png' style="height: 300px; width:500px;">
+        </center>
+    {% endif %}
+    <div id="products" class="row view-group" style="padding:10px;">
+        {% for model,spec,image_link,p_key in result %}
+        <div class="item col-md-3 col-sm-6" id="{{p_key}}">
+            <center>
+                <button class="btn" style="color: white; background:rgb(2, 103, 255)" onclick="removeFromCompare({{p_key}})">Remove</button>
+            </center>
+            <br>
+            <div class="thumbnail card" id="box{{pk}}"">
+                <center>
+                    <h5 class="group card-title inner list-group-item-heading">
+                        {{model}}
+                    </center>
+                </h5>
+                {% if image_link == "Not Found" %}
+                    <div class="img-event">
+                        <center><img class="group list-group-image img-fluid" src="https://i.postimg.cc/gcHQcNYk/default.jpg" alt=".."/></center>
+                        
+                    </div>
+                {% else %}
+                    <div class="img-event">
+                        <center><img class="group list-group-image img-fluid" src="{{image_link}}" alt=""/></center>
+                    </div>
+                {% endif %}
+                <div class="caption card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <table>
+                                <tr><th>Specifications</th></tr>
+                                {% for s in spec %}
+                                <tr><td style="height: 60px;">{{s}}</td></tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    <script>
+        function removeFromCompare(model_key)
+            {
+                //alert(model_key);            
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type:'POST',
+                            url:'{% url 'remove-from-compare' %}',
+                            data:{
+                                model_key:model_key,
+                            },
+                            success:function(response)
+                            {
+                            
+                                var flag = response['flag'];
+                                var model_key = response['model_key'];
+                                if(flag == 'no')
+                                {
+                                    alert("There is some error");
+                                }
+                                else if(flag == 'yes')
+                                {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Removed successfully !',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                    document.getElementById(model_key).style.display = "none";
+                                    //alert("Up Voted successfully !");
+                                }
+                            },
+                            error:function(response){
+                                alert(response["responseJSON"]["error"]);
+                            }
+                        });   
+                    }
+                  });
+            }
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+products:
+    css: div._2kHMtA
+    xpath: null
+    multiple: true
+    type: Text
+    children:
+        url:
+            css: a._1fQZEK
+            xpath: null
+            type: Attribute
+            attribute: href

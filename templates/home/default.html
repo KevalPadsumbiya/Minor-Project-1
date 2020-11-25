@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../../static/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../../static/img/favicon.png">
+    <title>
+        Minor Project 1
+    </title>
+     
+    <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+    <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
+    <!-- Nucleo Icons -->
+    <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-icons.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-svg.css' %}"/>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" type="text/css" href="../../static/css/font-awesome.css "/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/nucleo-svg.css "/>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/font-awesome.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-svg.css' %}"/>
+    <!-- CSS Files -->
+    <link rel="stylesheet" type="text/css" href="../../static/css/argon-design-system.css?v=1.2.0"/>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/argon-design-system.css?v=1.2.0' %}"/>
+
+    <style>
+        /*the container must be positioned relative:*/
+        .autocomplete {
+        position: relative;
+        display: inline-block;
+        }
+                .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 0;
+        right: 0;
+        }
+
+        .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+        }
+
+        /*when hovering an item:*/
+        .autocomplete-items div:hover {
+        background-color: #e9e9e9;
+        }
+
+        /*when navigating through the items using the arrow keys:*/
+        .autocomplete-active {
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+        }
+        .dropdown-item {
+            transition: 0.2s;
+        }
+
+        .nav-link-inner--text {
+            font-size: 14x;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(150deg, #7795f8 15%, #6772e5 70%, #555abf 94%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        #search-bar {
+            display: none;
+        }
+
+        .view-group {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: row;
+            flex-direction: row;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+
+        .thumbnail {
+            margin-bottom: 30px;
+            padding: 0px;
+            -webkit-border-radius: 0px;
+            -moz-border-radius: 0px;
+            border-radius: 0px;
+        }
+
+        .item.list-group-item {
+            float: none;
+            width: 100%;
+            background-color: #fff;
+            margin-bottom: 30px;
+            -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0 1rem;
+            border: 0;
+        }
+
+        .item.list-group-item .img-event {
+            float: left;
+            width: 30%;
+        }
+
+        .item.list-group-item .list-group-image {
+            margin-right: 10px;
+        }
+
+        .item.list-group-item .thumbnail {
+            margin-bottom: 0px;
+            display: inline-block;
+        }
+
+        .item.list-group-item .caption {
+            float: left;
+            width: 70%;
+            margin: 0;
+        }
+
+        .item.list-group-item:before, .item.list-group-item:after {
+            display: table;
+            content: " ";
+        }
+
+        .item.list-group-item:after {
+            clear: both;
+        }
+
+        .item_btn {
+            background: white;
+            color: black;
+            border: 1px solid #bdbaba;
+        }
+
+        .item_btn:hover {
+            border: none;
+            color: white;
+            background: linear-gradient(150deg, #7795f8 15%, #6772e5 70%, #555abf 94%);
+        }
+
+        .card {
+            border: 1px solid #bdbaba;
+            transition: 0.4s;
+        }
+
+        .card:hover {
+            border: 1px solid rgb(61, 112, 252);
+        }
+
+        .check {
+            width: 15px;
+            height: 15px;
+        }
+
+        .notification {
+
+            background: linear-gradient(150deg, #7795f8 15%, #6772e5 70%, #555abf 94%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 26px;
+            position: relative;
+            display: inline-block;
+            border-radius: 2px;
+            transition: 0.2s;
+        }
+
+        .notification:hover {
+            background: white;
+            border: 1px solid black;
+        }
+
+        .notification .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            border: 1px solid #6772e5;
+            padding: 8px 10px;
+            border-radius: 50%;
+            background-color: white;
+            color: black;
+        }
+
+        @media only screen and (max-width: 726px) { 
+          #search_button { 
+            display: none; 
+          } 
+        }
+        #heart
+        {
+          color:  DodgerBlue;
+        }
+        #out:hover #heart
+        {
+          color:  white;
+        }
+        .avail tr:nth-child(even) {background-color: #f2f2f2;}
+
+    </style>
+</head>
+
+<body class="landing-page">
+<!-- Navbar -->
+<nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
+    <div class="container">
+        <a class="navbar-brand mr-lg-5" href="{% url 'index' %}" style="">
+            <h3 style="color: white;">Minor Project I</h3>
+            <!-- <img src="../../static/img/brand/white.png"> -->
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"
+                aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse" id="navbar_global">
+            <div class="navbar-collapse-header">
+                <div class="row">
+                    <div class="col-6 collapse-brand">
+                        <a href="{% url 'index' %}">
+                            <h4 style="color: black;">Minor Project I</h4>
+                            <!-- <img src="../../static/img/brand/blue.png"> -->
+                        </a>
+                    </div>
+                    <div class="col-6 collapse-close">
+                        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar_global"
+                                aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
+                <li class="nav-item dropdown">
+                    <!-- <a href="{% url 'index' %}" class="nav-link">
+                        <sp an class="nav-link-inner--text">Home</span>
+                    </a> -->
+                    <!-- <div class="dropdown-menu dropdown-menu-xl">
+                      <div class="dropdown-menu-inner">
+                        <a href="https://demos.creative-tim.com/argon-design-system/docs/getting-started/overview.html" class="media d-flex align-items-center">
+                          <div class="icon icon-shape bg-gradient-primary rounded-circle text-white">
+                            <i class="ni ni-spaceship"></i>
+                          </div>
+                          <div class="media-body ml-3">
+                            <h6 class="heading text-primary mb-md-1">Getting started</h6>
+                            <p class="description d-none d-md-inline-block mb-0">Learn how to use compiling Scss, change brand colors and more.</p>
+                          </div>
+                        </a>
+                        <a href="https://demos.creative-tim.com/argon-design-system/docs/foundation/colors.html" class="media d-flex align-items-center">
+                          <div class="icon icon-shape bg-gradient-success rounded-circle text-white">
+                            <i class="ni ni-palette"></i>
+                          </div>
+                          <div class="media-body ml-3">
+                            <h6 class="heading text-primary mb-md-1">Foundation</h6>
+                            <p class="description d-none d-md-inline-block mb-0">Learn more about colors, typography, icons and the grid system we used for .</p>
+                          </div>
+                        </a>
+                        <a href="https://demos.creative-tim.com/argon-design-system/docs/components/alerts.html" class="media d-flex align-items-center">
+                          <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                            <i class="ni ni-ui-04"></i>
+                          </div>
+                          <div class="media-body ml-3">
+                            <h5 class="heading text-warning mb-md-1">Components</h5>
+                            <p class="description d-none d-md-inline-block mb-0">Browse our 50 beautiful handcrafted components offered in the Free version.</p>
+                          </div>
+                        </a>
+                      </div>
+                    </div> -->
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
+                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
+                        <span class="nav-link-inner--text">Brands <i style="font-size: 13px;"
+                                                                     class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="byBrand?brand=Samsung" class="dropdown-item">Samsung</a>
+                        <a href="byBrand?brand=Apple" class="dropdown-item">Apple</a>
+                        <a href="byBrand?brand=Oneplus" class="dropdown-item">Oneplus</a>
+                        <a href="byBrand?brand=OPPO" class="dropdown-item">OPPO</a>
+                        <a href="byBrand?brand=Vivo" class="dropdown-item">VIVO</a>
+                        <a href="byBrand?brand=POCO" class="dropdown-item">POCO</a>
+                        <a href="byBrand?brand=Realme" class="dropdown-item">Realme</a>
+                        <a href="byBrand?brand=Asus" class="dropdown-item">Asus</a>
+                        <a href="byBrand?brand=Tecno" class="dropdown-item">Tecno</a>
+                        <a href="byBrand?brand=MI" class="dropdown-item">MI</a>
+                    </div>
+
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
+                        <i class="ni ni-collection d-lg-none"></i>
+                        <span class="nav-link-inner--text">Prices <i style="font-size: 13px;"
+                                                                     class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="../examples/landing.html" class="dropdown-item">Rs. 0 - 10,000</a>
+                        <a href="../examples/landing.html" class="dropdown-item">Rs. 10,000 - 20,000</a>
+                        <a href="../examples/landing.html" class="dropdown-item">Rs. 20,000 - 30,000</a>
+                        <a href="../examples/landing.html" class="dropdown-item">Rs. 30,000 - 40,000</a>
+                        <a href="../examples/landing.html" class="dropdown-item">Rs. 40,000+</a>
+                    </div>
+
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="news" class="nav-link" role="button">
+                        <!-- <i class="ni ni-collection d-lg-none"></i> -->
+                        <span class="nav-link-inner--text">News</span>
+                    </a>
+                </li>
+                {% if login_flag %}
+                  <li class="nav-item dropdown">
+                    <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
+                        <i class="ni ni-collection d-lg-none"></i>
+                        <span class="nav-link-inner--text">Other <i style="font-size: 13px;"
+                                                                    class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="favourite" class="dropdown-item" id="out"><i class="fas fa-heart" id="heart"></i>Favourites</a>
+                        <a href="compare" class="dropdown-item">Compare</a>
+                    </div>
+                  </li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+
+                <li class="nav-item">
+                    <!-- <li class="nav-item d-none d-lg-block ml-lg-4"></li> -->
+                    {% if login_flag %}
+                        <li class="nav-item dropdown">
+                    <a href="#" class="btn btn-neutral btn-icon" data-toggle="dropdown" href="#" role="button">
+                        <span class="nav-link-inner--text">{{ user_name }}</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Profile</a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">Log Out</a>
+                    </div>
+
+                </li>
+                    {% else %}
+                    <a href="sign-in" target="" class="btn btn-neutral btn-icon">
+              <span class="btn-inner--icon">
+                <i class="fa fa-sign-in"></i>
+              </span>
+                        <span class="nav-link-inner--text" id="login_user">LogIn</span>
+                    </a>
+                    {% endif %}
+                    <a href="#" id="search_button" target="" class="btn btn-neutral btn-icon" onclick="showIt()">
+              <span class="btn-inner--icon">
+                <i class="fa fa-search mr-2"></i>
+              </span>
+                        <span class="nav-link-inner--text">Search</span>
+                    </a>
+                </li>
+                </ul>
+        </div>
+    </div>
+</nav>
+<!-- End Navbar -->
+
+<div>
+    {% block content %}
+
+    {% endblock %}
+</div>
+
+<div class="wrapper">
+
+    <!-- <br /><br /> -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row row-grid align-items-center mb-5">
+                <div class="col-lg-6">
+                    <!-- <h3 class="text-primary font-weight-light mb-2">Thank you for supporting us!</h3> -->
+                    <h4 class="text-primary mb-0 font-weight-light">Let's get in touch on any of these platforms.</h4>
+                </div>
+                <div class="col-lg-6 text-lg-center btn-wrapper">
+                    <button onClick="window.open('https://github.com/KevalPadsumbiya/Last')" class="btn btn-icon-only" style="background: red;">
+                        <span class="btn-inner--icon"><i class="fa fa-google" style="color: white;"></i></span>
+                    </button>
+                    <!-- <button target="_blank" href="https://www.facebook.com/CreativeTim/" rel="nofollow"
+                            class="btn-icon-only rounded-circle btn btn-facebook" data-toggle="tooltip"
+                            data-original-title="Like us">
+                        <span class="btn-inner--icon"><i class="fab fa-facebook"></i></span>
+                    </button>
+                    <button target="_blank" href="https://dribbble.com/creativetim" rel="nofollow"
+                            class="btn btn-icon-only btn-dribbble rounded-circle" data-toggle="tooltip"
+                            data-original-title="Follow us">
+                        <span class="btn-inner--icon"><i class="fa fa-dribbble"></i></span>
+                    </button> -->
+                    <button onClick="window.open('https://github.com/KevalPadsumbiya/Last')"  class="btn btn-icon-only btn-github ">
+                        <span class="btn-inner--icon"><i class="fa fa-github"></i></span>
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row align-items-center justify-content-md-between">
+                <div class="col-md-6">
+                    <div class="copyright">
+                        <span>More Details : </span>
+                        <!-- &copy; 2020 <a href="" target="">Group 12</a>. -->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="nav nav-footer justify-content-end">
+                        <li class="nav-item">
+                            <a href="" class="nav-link" target="_blank">Group 12</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link" target="_blank">About Us</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a href="" class="nav-link" target="_blank">Blog</a>
+                        </li> -->
+                        <!-- <li class="nav-item">
+                            <a href="" class="nav-link" target="_blank">License</a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+<!--   Core JS Files   -->
+<script src="../../static/js/core/jquery.min.js" type="text/javascript"></script>
+<script src="../../static/js/core/popper.min.js" type="text/javascript"></script>
+<script src="../../static/js/core/bootstrap.min.js" type="text/javascript"></script>
+<script src="../../static/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
+<script src="../assets/js/plugins/bootstrap-switch.js"></script>
+<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+<script src="../../static/js/plugins/nouislider.min.js" type="text/javascript"></script>
+<script src="../../static/js/plugins/moment.min.js"></script>
+<script src="../../static/js/plugins/datetimepicker.js" type="text/javascript"></script>
+<script src="../../static/js/plugins/bootstrap-datepicker.min.js"></script>
+<!-- Control Center for Argon UI Kit: parallax effects, scripts for the example pages etc -->
+<!--  Google Maps Plugin    -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+<script src="../../static/js/argon-design-system.min.js?v=1.2.0" type="text/javascript"></script>
+<script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+
+<!-- Sweet Alert 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="sweetalert2/dist/sweetalert2.all.min.js"></script>
+<!-- Include a polyfill for ES6 Promises (optional) for IE11 -->
+<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>
+<script src="sweetalert2/dist/sweetalert2.min.js"></script>
+
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+<!-- <script>
+  window.TrackJS &&
+    TrackJS.install({
+      token: "ee6fab19c5a04ac1a32a645abde4613a",
+      application: "argon-design-system-pro"
+    });
+</script> -->
+</body>
+
+</html>
