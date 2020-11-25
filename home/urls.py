@@ -23,4 +23,5 @@ urlpatterns = [
 	path('remove-from-favourites',views.removeFromFavourites,name="remove-from-favourites"),
 	path('forgot',views.forgot,name="forgot_password"),
 	path('forgot_validate',views.forgot_validate,name="forgot_validate"),
+	path('profile',views.profile,name="profile"),
 ]

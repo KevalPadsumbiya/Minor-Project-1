@@ -695,3 +695,20 @@ def SendMail(mail):
     user = UserData.objects.get(user_email=mail)
     user.password = res
     user.save()
+
+def profile(request):
+    user_object = get_object_or_404(UserData, user_name=request.session['user_name'])
+    comments = Comments.objects.filter(username=user_object)
+    pk_m=[]
+    pk_c=[]
+    mobile_name=[]
+    date=[]
+    comment_text = []
+    for row in comments:
+        pk_m.append(row.mobile.pk)
+        pk_c.append(row.pk)
+        mobile_name.append(row.mobile.mobile_name)
+        date.append(row.date)
+        comment_text.append(row.comment)
+    result = zip(pk_m,pk_c,mobile_name,date,comment_text)
+    return render(request,"home/profile.html",{'result':result})
