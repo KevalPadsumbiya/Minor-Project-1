@@ -551,7 +551,7 @@ def postComment(request):
         model_object = get_object_or_404(mobileSpecsLink, pk = model_key)
         
         l = request.POST['comment'].strip().split()
-        fp = open('C:/Users/Lenovo/Desktop/New Website/website/offensivewordslist.txt','r')
+        fp = open('offensivewordslist.txt','r')
         offensive_words = fp.readline().split(',')
         for word in l:
             for b_word in offensive_words:
