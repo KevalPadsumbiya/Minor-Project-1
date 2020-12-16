@@ -25,6 +25,4 @@ urlpatterns = [
 	path('forgot_validate',views.forgot_validate,name="forgot_validate"),
 	path('admin-dashboard',views.Admin,name="Admin"),
 	path('update-database',views.updateDB,name="updateDB"),
-	path('profile',views.profile,name="profile"),
-	path('price_filter',views.price_filter,name="price_filter")
 ]
