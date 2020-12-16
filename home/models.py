@@ -5,6 +5,7 @@ class mobileSpecsLink(models.Model):
     mobile_name = models.CharField(max_length=250)
     specifications = models.CharField(max_length=1500)
     image_link = models.CharField(max_length=1000) 
+    price = models.CharField(max_length=10)
 
     def __str__(self):
         return self.brand_name+'---'+self.mobile_name+'---'+self.image_link+'---'+self.specifications
@@ -14,9 +15,10 @@ class deviceDetails(models.Model):
     mobile_name = models.CharField(max_length=250)
     specifications = models.CharField(max_length=1500)
     image_link = models.CharField(max_length=1000) 
+    price = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.brand_name+'---'+self.mobile_name+'---'+self.image_link+'---'+self.specifications
+        return self.brand_name+'---'+self.mobile_name+'---'+self.image_link+'---'+self.specifications+'---'+self.price
 
 class UserData(models.Model):
     user_name = models.CharField(max_length=20)

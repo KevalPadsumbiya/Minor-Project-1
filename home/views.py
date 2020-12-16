@@ -696,7 +696,6 @@ def SendMail(mail):
     user.password = res
     user.save()
 
-<<<<<<< HEAD
 def Admin(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
@@ -706,6 +705,7 @@ def updateDB(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
     
+    # deviceDetails.objects.all().delete()
     f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/database.txt","r")
     data = f.readlines()
     for row in data:
@@ -713,26 +713,8 @@ def updateDB(request):
         print(row[0])
         print(row[1])
         # print(row[2].split('---'))
-        r = deviceDetails(brand_name = row[0], mobile_name = row[1], specifications = row[2], image_link = "Not Found")
+        r = deviceDetails(brand_name = row[0], mobile_name = row[1], specifications = row[3], image_link = "Not Found",price=row[2])
         r.save()
 
     return render(request, "home/update.html",{'msg':'updated'})
     
-=======
-def profile(request):
-    user_object = get_object_or_404(UserData, user_name=request.session['user_name'])
-    comments = Comments.objects.filter(username=user_object)
-    pk_m=[]
-    pk_c=[]
-    mobile_name=[]
-    date=[]
-    comment_text = []
-    for row in comments:
-        pk_m.append(row.mobile.pk)
-        pk_c.append(row.pk)
-        mobile_name.append(row.mobile.mobile_name)
-        date.append(row.date)
-        comment_text.append(row.comment)
-    result = zip(pk_m,pk_c,mobile_name,date,comment_text)
-    return render(request,"home/profile.html",{'result':result})
->>>>>>> 706171caff89b06fbe1b38a27341e68e0c7e8982

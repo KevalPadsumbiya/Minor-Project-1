@@ -4,11 +4,14 @@ result:
     multiple: true
     type: Text
     children:
+        # name:
+        #     css: 'span div.p13n-sc-truncate-desktop-type2.p13n-sc-truncated'
+        #     # xpath: null
+        #     type: Text
         name:
-            css: 'span div.p13n-sc-truncate-desktop-type2.p13n-sc-truncated'
+            css: 'h2 a.a-link-normal.a-text-normal'
             # xpath: null
             type: Text
-            
         # url:
         #     css: 'h2 a.a-link-normal.a-text-normal'
         #     # xpath: null
@@ -32,9 +35,9 @@ result:
         #     css: 'span.a-price:nth-of-type(1) span.a-offscreen'
         #     # xpath: null
         #     type: Text
-        # img_url:
-        #     css: 'div img.s-image'
-        #     # xpath: null
-        #     multiple: True
-        #     type: Attribute
-        #     attribute: src
+        img_url:
+            css: 'div img.s-image'
+            # xpath: null
+            # multiple: True
+            type: Attribute
+            attribute: src
