@@ -57,8 +57,8 @@ for brand in brands :
     for t1,t2 in zip(name_list.items(),name_list1.items()):
         # print(t1[0],t1[1])
         try :
-            f.write(str(brand+'|||'+t1[0]+'|||'+t1[1]+'|||'+t2[1])+'\n')
-            f1.write(t1[0]+' ,')
+            # f.write(str(brand+'|||'+t1[0]+'|||'+t1[1]+'|||'+t2[1])+'\n')
+            # f1.write(t1[0]+' ,')
         except:
             pass
     for key,value in name_list1.items():
