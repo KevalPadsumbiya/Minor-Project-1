@@ -65,31 +65,6 @@ from urllib.request import Request,urlopen
 #     #     print(key,value)
 #     print(cnt)
 
-url = 'https://www.flipkart.com/mobiles/mi~brand/pr?sid=tyy,4io&otracker=nmenu_sub_Electronics_0_Mi'
-req = Request(url)
-webpage=urlopen(req).read()
-import re 
-
-f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/temp.txt","w")
-
-soup = BeautifulSoup(webpage,'html.parser')
-html_obj = soup.prettify('utf-8')
-# print(str(html_obj))
-data = str(html_obj)
-f.write(data[data.find("\"media\""):])
-data = data[data.find("\"media\""):]
-# res = [i.start() for i in re.finditer("\"media\"", data)]
-for i in re.finditer("\"titles\":{\"title\":\"", data):
-    print(i.start())
-    
-    # data = data[i.start()+19:] 
-    j = i.start()+19
-    while data[j+2] != "(":
-        print(data[j],end="")
-        j += 1
-    # print(data[i.start()+19:].find("("))
-    # print(data[i.start()+19:data[i.start()+19:].find("(")])
-
 # print(res)
 # print(len(res))
 # for outer_box in soup.find_all('img',class_="_396cs4"):
