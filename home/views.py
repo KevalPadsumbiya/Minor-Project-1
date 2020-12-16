@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404,HttpResponseRedirect
 import urllib.parse
 from selectorlib import Extractor
 from website import settings
-from .models import mobileSpecsLink,UserData,Compare,Favourite,Comments,Votes
+from .models import mobileSpecsLink,UserData,Compare,Favourite,Comments,Votes,deviceDetails
 from bs4 import BeautifulSoup,SoupStrainer
 import requests
 from urllib.parse import unquote
@@ -695,3 +695,25 @@ def SendMail(mail):
     user = UserData.objects.get(user_email=mail)
     user.password = res
     user.save()
+
+def Admin(request):
+    if request.session.get('user_name',0) == 0 :
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
+    return render(request, "home/update.html")
+
+def updateDB(request):
+    if request.session.get('user_name',0) == 0 :
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
+    
+    f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/database.txt","r")
+    data = f.readlines()
+    for row in data:
+        row = row.split('|||')
+        print(row[0])
+        print(row[1])
+        # print(row[2].split('---'))
+        r = deviceDetails(brand_name = row[0], mobile_name = row[1], specifications = row[2], image_link = "Not Found")
+        r.save()
+
+    return render(request, "home/update.html",{'msg':'updated'})
+    
