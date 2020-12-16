@@ -796,5 +796,6 @@ def price_filter(request):
                 spec.append(row.specifications)
                 img.append(row.image_link)
                 price.append(row.price)
+#                
         result = zip(pk_d,brand_name,mob_name,spec,img,price)
         return render(request,"home/price_fil.html",{'result':result,'len':len(price)})
