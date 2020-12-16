@@ -16,6 +16,7 @@ import string
 import random
 from django.core.mail import send_mail
 import threading
+from django.http import HttpResponse
 
 # def index(request):
 #     if request.method == 'POST':    # if searched something via search bar
@@ -704,7 +705,7 @@ def Admin(request):
 def updateDB(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
-    
+
     # deviceDetails.objects.all().delete()
     f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/database.txt","r")
     data = f.readlines()
@@ -717,4 +718,58 @@ def updateDB(request):
         r.save()
 
     return render(request, "home/update.html",{'msg':'updated'})
-    
+
+
+def profile(request):
+    user_object = get_object_or_404(UserData, user_name=request.session['user_name'])
+    comments = Comments.objects.filter(username=user_object)
+    pk_m=[]
+    pk_c=[]
+    mobile_name=[]
+    date=[]
+    comment_text = []
+    for row in comments:
+        pk_m.append(row.mobile.pk)
+        pk_c.append(row.pk)
+        mobile_name.append(row.mobile.mobile_name)
+        date.append(row.date)
+        comment_text.append(row.comment)
+    result = zip(pk_m,pk_c,mobile_name,date,comment_text)
+    return render(request,"home/profile.html",{'result':result})
+
+def price_filter(request):
+    if request.method == 'GET':
+        pk_d=[]
+        brand_name=[]
+        mob_name=[]
+        spec=[]
+        img=[]
+        price=[]
+        limit = request.GET['p']
+        data = deviceDetails.objects.all()
+        if limit=='0':
+            lower = 0
+            upper = 10000
+        elif limit=='1':
+            lower = 10000
+            upper = 20000
+        elif limit=='2':
+            lower = 20000
+            upper = 30000
+        elif limit=='3':
+            lower = 30000
+            upper = 40000
+        else:
+            lower = 40000
+            upper = 9999999999
+        for row in data:
+            p = eval(row.price.replace(',',''))
+            if p>lower and p<upper:
+                pk_d.append(row.pk)
+                brand_name.append(row.brand_name)
+                mob_name.append(row.mobile_name)
+                spec.append(row.specifications)
+                img.append(row.image_link)
+                price.append(row.price)
+        result = zip(pk_d,brand_name,mob_name,spec,img,price)
+        return render(request,"home/price_fil.html",{'result':result,'len':len(price)})
