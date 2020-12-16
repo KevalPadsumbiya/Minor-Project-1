@@ -23,6 +23,10 @@ urlpatterns = [
 	path('remove-from-favourites',views.removeFromFavourites,name="remove-from-favourites"),
 	path('forgot',views.forgot,name="forgot_password"),
 	path('forgot_validate',views.forgot_validate,name="forgot_validate"),
+<<<<<<< HEAD
 	path('admin-dashboard',views.Admin,name="Admin"),
 	path('update-database',views.updateDB,name="updateDB"),
+=======
+	path('profile',views.profile,name="profile"),
+>>>>>>> 706171caff89b06fbe1b38a27341e68e0c7e8982
 ]

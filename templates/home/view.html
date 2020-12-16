@@ -248,7 +248,7 @@
             <div class="form-group">
             <textarea class="form-control" id="comment_text" rows="3" placeholder="Type your comment here"></textarea>
             <br>
-            <button type="submit" class="btn btn-primary" id="{{pk}}" onclick="postComment(this.id)">Post</button>
+                <button type="button" class="btn btn-primary" id="{{pk}}" onclick="postComment(this.id)">Post</button>
         </div>
         </form><br>
         <table class="options" id="options" onclick="hideThis()" style="display: none; margin-left:42%;">
@@ -352,6 +352,7 @@
                     {
                         alert("Posted successfully ! If comment is not appearing then please reload your browser :)");
                         document.getElementById('(num_of_comments)').innerHTML = updated_count;
+                        $("#comment").submit();
                     }
                     else
                     {

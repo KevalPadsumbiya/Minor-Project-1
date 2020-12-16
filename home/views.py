@@ -488,7 +488,7 @@ def addToCompare(request):
             Compare.objects.filter(mobile = model_object).delete()
             # print("Deletde")
             return JsonResponse({'flag':"no",'cur': Compare.objects.count()},status=200)
-        elif len(Compare.objects.all()) == 4:
+        elif len(Compare.objects.filter(username=user_object)) == 4:
             return JsonResponse({'flag':"full",'cur': Compare.objects.count()},status=200)
         else:
             # print("Added")
@@ -551,7 +551,7 @@ def postComment(request):
         model_object = get_object_or_404(mobileSpecsLink, pk = model_key)
         
         l = request.POST['comment'].strip().split()
-        fp = open('C:/Users/Lenovo/Desktop/New Website/website/offensivewordslist.txt','r')
+        fp = open('offensivewordslist.txt','r')
         offensive_words = fp.readline().split(',')
         for word in l:
             for b_word in offensive_words:
@@ -696,6 +696,7 @@ def SendMail(mail):
     user.password = res
     user.save()
 
+<<<<<<< HEAD
 def Admin(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
@@ -717,3 +718,21 @@ def updateDB(request):
 
     return render(request, "home/update.html",{'msg':'updated'})
     
+=======
+def profile(request):
+    user_object = get_object_or_404(UserData, user_name=request.session['user_name'])
+    comments = Comments.objects.filter(username=user_object)
+    pk_m=[]
+    pk_c=[]
+    mobile_name=[]
+    date=[]
+    comment_text = []
+    for row in comments:
+        pk_m.append(row.mobile.pk)
+        pk_c.append(row.pk)
+        mobile_name.append(row.mobile.mobile_name)
+        date.append(row.date)
+        comment_text.append(row.comment)
+    result = zip(pk_m,pk_c,mobile_name,date,comment_text)
+    return render(request,"home/profile.html",{'result':result})
+>>>>>>> 706171caff89b06fbe1b38a27341e68e0c7e8982
