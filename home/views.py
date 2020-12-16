@@ -57,13 +57,16 @@ def byBrand(request):
     li = text.split(',')
     d = dict()
     d["data"] = li
-    l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','MI','Tecno','POCO','Realme']
+    l = ['Mi','Realme','Samsung','OPPO','Apple','Asus','Vivo','Honor','POCO','Micromax','Motorola','Google','HTC','Sony','Huawei','Intex','Nokia','LG','Panasonic','Nubia']
+    # l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','Mi','Tecno','POCO','Realme']
     if 'search_text' in request.POST:
-        queryset = list(mobileSpecsLink.objects.filter(mobile_name__startswith=request.POST.get('search_text')))
+        queryset = list(deviceDetails.objects.filter(mobile_name__startswith=request.POST.get('search_text')))
         text = request.POST.get('search_text')
     elif request.GET.get('brand') in l:
-        queryset = list(mobileSpecsLink.objects.filter(brand_name=request.GET.get('brand')))
+        queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
         text = request.GET.get('brand')
+        # print(request.GET.get('brand'))
+    # print(queryset)
     names = []
     links = []
     p_key = []
@@ -72,21 +75,27 @@ def byBrand(request):
     compare_status = []
     for item in queryset:
         # print(item.pk)
-        if len(Compare.objects.filter(mobile = get_object_or_404(mobileSpecsLink, pk = item.pk))):
+        if len(Compare.objects.filter(mobile = get_object_or_404(deviceDetails, pk = item.pk))):
             compare_status.append("Remove from compare")
         else:
             compare_status.append("Add to Compare")
-        if len(Favourite.objects.filter(mobile = get_object_or_404(mobileSpecsLink, pk = item.pk))):
+        if len(Favourite.objects.filter(mobile = get_object_or_404(deviceDetails, pk = item.pk))):
             fav_status.append("Remove from favourites")
         else:
             fav_status.append("Add to Favourites")
         p_key.append(item.pk)
         item = str(item)
-        item = item.split('---')
+        item = item.split('|||')
+        # print(item)
+        # print(item[1])
+        # print(item[2][:-1])
+        # print(fav_status[-1])
+        # print(compare_status[-1])
         names.append(item[1])
-        links.append(item[3])
-        # for (a, b, c) in zip(names, links, p_key): 
-        #     result.append([a,b,c])
+        links.append(item[2])
+        # print(links)
+    # for (a, b, c) in zip(names, links, p_key): 
+    #     result.append([a,b,c])
         # print(result)
     result = zip(names,links,p_key,compare_status,fav_status)
 
@@ -101,7 +110,7 @@ def byBrand(request):
 # def byBrand(request):
 #     l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','MI','Tecno','POCO','Realme']
 #     if request.GET.get('brand') in l:
-#         queryset = list(mobileSpecsLink.objects.filter(brand_name=request.GET.get('brand')))
+#         queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
 #         names = []
 #         links = []
 #         p_key = []
@@ -129,20 +138,21 @@ def price_scraper(url):
 
 def model(request):
 
-
     # print(request.GET.get('model'))
     l = []
     # result = []
     # print(request.GET.get('model'))
     model = request.GET.get('model')
-    queryset = str(mobileSpecsLink.objects.get(pk=model))
-    l = queryset.split('---')[2]
+    queryset = str(deviceDetails.objects.get(pk=model))
+    print("Queryset")
+    print(queryset)
+    l = queryset.split('|||')[3]
     # result.append(queryset.split('---')[1])
     # result.append(l.split(','))
     # result.append(queryset.split('---')[3])
     # result = zip(queryset.split('---')[1],l.split(','),queryset.split('---')[3])
 
-    data = Comments.objects.filter(mobile = get_object_or_404(mobileSpecsLink, pk = model))
+    data = Comments.objects.filter(mobile = get_object_or_404(deviceDetails, pk = model))
     names = []
     dates = []
     comment_text = []
@@ -154,7 +164,7 @@ def model(request):
 
     for row in data:
         # print(row.pk)
-        p_key.append(row.pk)
+        # p_key.append(row.pk)
         temp = str(row).split('---')
         print(temp)
         names.append(temp[-3])
@@ -167,7 +177,7 @@ def model(request):
         else:
             vote_count.append('+'+temp[-4])
 
-        # print(temp[2])
+        print(temp[2])
         if request.session.get('user_name', 0) != 0:
             if(temp[-3]==request.session.get('user_name', 0)):
                 delete_right.append(1)
@@ -271,9 +281,10 @@ def model(request):
     # print(l3)
     # result1 = zip(l1,l2,l3)
 
-    mobile_name = queryset.split('---')[1][:-1]
+    mobile_name = queryset.split('|||')[1]
+    # print(mobile_name)
     url = "http://flipkart.com/search?q="+'%20'.join(mobile_name.split())
-    print(url)
+    # print(url)
     data = requests.get(url).text
     soup = BeautifulSoup(data,'lxml')
 
@@ -286,6 +297,7 @@ def model(request):
         name = item.find('div',class_="_4rR01T").text
         temp = name
         if '(' in name:
+            # print(name+'---')
             name = name[:name.index('(')]
             if name[:-1] == mobile_name:
                 for gb in rom:
@@ -300,10 +312,11 @@ def model(request):
                         price.append(rs[1:])
                         status.append(current_status)
                         flipkart_url.append("https://www.flipkart.com"+item['href'])
+                        # print("https://www.flipkart.com"+item['href'])
                         # print(temp,gb,rs[1:],status,"https://www.flipkart.com"+item['href'])
                         break
-    for name,pr,st,link in zip(varient,price,status,flipkart_url):
-        print(name+" - "+pr+' - '+st+' - '+link)
+    # for name,pr,st,link in zip(varient,price,status,flipkart_url):
+    #     print(name+" - "+pr+' - '+st+' - '+link)
     
     result1 = zip(varient,price,status,flipkart_url)
     # result.append([temp[-3],temp[-1],temp[-2].split("||||")])
@@ -311,9 +324,9 @@ def model(request):
     # print(down_voted)
     result = zip(names,dates,comment_text,p_key,vote_count,up_voted,down_voted,delete_right)
     if request.session.get('user_name', 0) != 0:
-        return render(request,"home/view.html",{'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('---')[1],'image_url':queryset.split('---')[3],'spec':l.split(',')})
+        return render(request,"home/view.html",{'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
     else:
-        return render(request,"home/view.html",{'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('---')[1],'image_url':queryset.split('---')[3],'spec':l.split(',')})
+        return render(request,"home/view.html",{'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
 
 def signin(request):
     if request.session.get('user_name',0) == 0 :
@@ -338,21 +351,21 @@ def compare(request):
     p_key = []
     for row in data:
         # p_key.append(row.pk)
-        model = str(row.mobile).split('---')
-        temp = mobileSpecsLink.objects.filter(mobile_name = model[1])
+        model = str(row.mobile).split('|||')
+        temp = deviceDetails.objects.filter(mobile_name = model[1])
         for el in temp:
             p_key.append(el.pk)
             break
         # print(str(row.mobile).split('---'))
         name.append(model[1])
-        image_link.append(model[3])
-        spec.append(model[2].split(','))
+        image_link.append(model[2])
+        spec.append(model[3].split('---'))
         # print()
     
     # print(data)
     # for id in ids:
     #     temp = []
-    #     queryset = str(mobileSpecsLink.objects.get(pk=id))
+    #     queryset = str(deviceDetails.objects.get(pk=id))
     #     name.append(queryset.split('---')[1])
     #     l = queryset.split('---')[2]
     #     image_link.append(queryset.split('---')[3])
@@ -482,7 +495,7 @@ def addToCompare(request):
         # print(pri_key)
         
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
-        model_object = get_object_or_404(mobileSpecsLink, pk = pri_key)
+        model_object = get_object_or_404(deviceDetails, pk = pri_key)
         
         if len(Compare.objects.filter(mobile = model_object)):
             Compare.objects.filter(mobile = model_object).delete()
@@ -504,7 +517,7 @@ def addToFavourite(request):
         # print("YESS")
         pri_key = request.POST['pri_key']
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
-        model_object = get_object_or_404(mobileSpecsLink, pk = pri_key)
+        model_object = get_object_or_404(deviceDetails, pk = pri_key)
         
         if len(Favourite.objects.filter(mobile = model_object)):
             Favourite.objects.filter(mobile = model_object).delete()
@@ -527,14 +540,14 @@ def favourite(request):
     p_key = []
     for row in data:
         # p_key.append(row.pk)
-        model = str(row.mobile).split('---')
-        temp = mobileSpecsLink.objects.filter(mobile_name = model[1])
+        model = str(row.mobile).split('|||')
+        temp = deviceDetails.objects.filter(mobile_name = model[1])
         for el in temp:
             p_key.append(el.pk)
             break
         # print(str(row.mobile).split('---'))
         name.append(model[1])
-        image_link.append(model[3])
+        image_link.append(model[2])
         # spec.append(model[2].split(','))
     result = zip(name,image_link,p_key)
     if request.session.get('user_name', 0) != 0:
@@ -548,7 +561,7 @@ def postComment(request):
         # print("Came")
         model_key = request.POST['model_key']
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
-        model_object = get_object_or_404(mobileSpecsLink, pk = model_key)
+        model_object = get_object_or_404(deviceDetails, pk = model_key)
         
         l = request.POST['comment'].strip().split()
         fp = open('offensivewordslist.txt','r')
@@ -582,7 +595,7 @@ def upvoteComment(request):
         comment_key = request.POST['comment_key']
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
         comment_object = get_object_or_404(Comments, pk = comment_key)
-        model_object = get_object_or_404(mobileSpecsLink, pk = model_key)
+        model_object = get_object_or_404(deviceDetails, pk = model_key)
         
         OB = Votes.objects.filter(comment=comment_object,username=user_object)
         if len(OB) :
@@ -614,7 +627,7 @@ def downvoteComment(request):
         comment_key = request.POST['comment_key']
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
         comment_object = get_object_or_404(Comments, pk = comment_key)
-        model_object = get_object_or_404(mobileSpecsLink, pk = model_key)
+        model_object = get_object_or_404(deviceDetails, pk = model_key)
         
         OB = Votes.objects.filter(comment=comment_object,username=user_object)
         if len(OB) :
@@ -651,7 +664,7 @@ def removeFromCompare(request):
         model_key = request.POST['model_key']
         print(model_key)
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
-        mobile_object = get_object_or_404(mobileSpecsLink, pk = model_key)
+        mobile_object = get_object_or_404(deviceDetails, pk = model_key)
         Compare.objects.filter(mobile = mobile_object,username = user_object).delete()
         return JsonResponse({'flag':"yes",'model_key':model_key},status=200)
 
@@ -662,7 +675,7 @@ def removeFromFavourites(request):
         model_key = request.POST['model_key']
         print(model_key)
         user_object = get_object_or_404(UserData, user_name = request.session['user_name'])
-        mobile_object = get_object_or_404(mobileSpecsLink, pk = model_key)
+        mobile_object = get_object_or_404(deviceDetails, pk = model_key)
         Favourite.objects.filter(mobile = mobile_object,username = user_object).delete()
         return JsonResponse({'flag':"yes",'model_key':model_key},status=200)
 
@@ -705,16 +718,28 @@ def updateDB(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
     
-    # deviceDetails.objects.all().delete()
-    f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/database.txt","r")
-    data = f.readlines()
-    for row in data:
-        row = row.split('|||')
-        print(row[0])
-        print(row[1])
-        # print(row[2].split('---'))
-        r = deviceDetails(brand_name = row[0], mobile_name = row[1], specifications = row[3], image_link = "Not Found",price=row[2])
-        r.save()
+    # deviceDetails.objects.all().delete()     # clear complete database
+    Compare.objects.all().delete()
+    Favourite.objects.all().delete()
+    Comments.objects.all().delete()
+    Votes.objects.all().delete()
+
+    # f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/database.txt","r")
+    # f1 = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/image_url.txt","r")
+    # data = f.readlines()
+    # data1 = f1.readlines()
+    # for row in data:
+    #     row = row.split('|||')
+    #     # print(row[0])
+    #     # print(row[1])
+    #     # print(row[2].split('---'))
+    #     # r = deviceDetails(brand_name = row[0], mobile_name = row[1], specifications = row[3], image_link = "Not Found",price=row[2])
+    #     for device in data1:
+    #         device = device.split('|||')
+    #         if device[0] == row[1] : 
+    #             r = deviceDetails(brand_name = row[0], mobile_name = row[1], specifications = row[3], image_link = device[1],price=row[2])
+    #             r.save()
+    #             break
 
     return render(request, "home/update.html",{'msg':'updated'})
     
