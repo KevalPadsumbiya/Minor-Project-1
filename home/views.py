@@ -17,6 +17,8 @@ import random
 from django.core.mail import send_mail
 import threading
 from django.http import HttpResponse
+from django.core.paginator import Paginator
+
 
 # def index(request):
 #     if request.method == 'POST':    # if searched something via search bar
@@ -145,8 +147,8 @@ def model(request):
     # print(request.GET.get('model'))
     model = request.GET.get('model')
     queryset = str(deviceDetails.objects.get(pk=model))
-    print("Queryset")
-    print(queryset)
+    # print("Queryset")
+    # print(queryset)
     l = queryset.split('|||')[3]
     # result.append(queryset.split('---')[1])
     # result.append(l.split(','))
@@ -165,9 +167,9 @@ def model(request):
 
     for row in data:
         # print(row.pk)
-        # p_key.append(row.pk)
+        p_key.append(row.pk)
         temp = str(row).split('---')
-        print(temp)
+        # print(temp)
         names.append(temp[-3])
         dates.append(temp[-1])
         comment_text.append(temp[-2].split("||||"))
@@ -178,7 +180,6 @@ def model(request):
         else:
             vote_count.append('+'+temp[-4])
 
-        print(temp[2])
         if request.session.get('user_name', 0) != 0:
             if(temp[-3]==request.session.get('user_name', 0)):
                 delete_right.append(1)
@@ -202,9 +203,8 @@ def model(request):
             up_voted.append(0)
             down_voted.append(0)
             delete_right.append(0)
-    
-    # print(names)
-    
+
+    result = zip(names,dates,comment_text,p_key,vote_count,up_voted,down_voted,delete_right)
     # param = dict()
     # param['q'] = queryset.split('---')[1]
     # url = "http://flipkart.com/search?"+urllib.parse.urlencode(param)
@@ -294,6 +294,9 @@ def model(request):
     price = []
     flipkart_url = []
     status = []
+    stars = []
+    ratings = []
+    reviews = []
     for item in soup.find_all('a',class_="_1fQZEK"):
         name = item.find('div',class_="_4rR01T").text
         temp = name
@@ -309,8 +312,25 @@ def model(request):
                             current_status = item.find('div',class_="_3G6awp").text
                         except :
                             pass
-                        varient.append(temp[temp.index('('):])
+                        varient.append(temp)
                         price.append(rs[1:])
+                        star = item.find('div',class_="_3LWZlK").text
+                        stars.append(star)
+                        print(item.find('div',class_="_3LWZlK").text)
+                        rating = item.find('span',class_="_2_R_DZ").span.span.text
+                        ratings.append(rating)
+                        print(rating)
+                        text = str(item.find('span',class_="_2_R_DZ").span)
+                        print(item.find('span',class_="_2_R_DZ").span)
+                        i = text.find('Reviews')-2
+                        review = ""
+                        while text[i] != '>':
+                            review += text[i]
+                            i -= 1
+                        review = review[::-1] + ' Reviews'
+                        review = review.strip()
+                        reviews.append(review)
+                        print(reviews)
                         status.append(current_status)
                         flipkart_url.append("https://www.flipkart.com"+item['href'])
                         # print("https://www.flipkart.com"+item['href'])
@@ -319,15 +339,74 @@ def model(request):
     # for name,pr,st,link in zip(varient,price,status,flipkart_url):
     #     print(name+" - "+pr+' - '+st+' - '+link)
     
-    result1 = zip(varient,price,status,flipkart_url)
-    # result.append([temp[-3],temp[-1],temp[-2].split("||||")])
-    # print(up_voted)
-    # print(down_voted)
-    result = zip(names,dates,comment_text,p_key,vote_count,up_voted,down_voted,delete_right)
+    result1 = zip(varient,price,status,flipkart_url,stars,ratings,reviews)
+
+
+    f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/temp.txt","r")
+    data = f.readlines()
+
+    e = Extractor.from_yaml_file('C:/Users/Lenovo/Desktop/Last-MP1/Minor-Project-1/home/Amazon_selector.yml')
+    headers = {
+            'dnt': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-user': '?1',
+            'sec-fetch-dest': 'document',
+            'referer': 'https://www.amazon.com/',
+            'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+        }
+
+    prefix = 'https://www.amazon.in/s?k='
+    device_name = mobile_name
+    suffix = '&rh=n%3A1805560031&ref=nb_sb_noss'
+
+    url = prefix + '+'.join(device_name.split()) + suffix
+
+    print(url)
+
+    r = requests.get(url,headers=headers)       
+    data1 = e.extract(r.text)
+
+    # print(data1)
+
+    while data1['result'] is None : 
+        r = requests.get(url,headers=headers)       
+        data1 = e.extract(r.text)
+
+    temp = data1['result']
+
+    # print(temp)
+
+    amazon_names = []
+    amazon_prices = []
+    amazon_ratings = []
+    amazon_totalratings = []
+    amazon_urls = []
+    for device in temp:
+        try:
+            if device_name in device['name'] and 'Case' not in device['name'] and 'case' not in device['name']:
+                print(device['name']+' - '+device['price'][1:]+' - https://amazon.in'+device['url']+' - '+ device['rating']+' - '+ device['total_ratings'])
+                amazon_names.append(device['name'])
+                amazon_prices.append(device['price'][1:])
+                amazon_ratings.append(device['rating'])
+                amazon_totalratings.append(device['total_ratings'])
+                amazon_urls.append('https://amazon.in'+device['url'])
+        except:
+            pass
+
+    result2 = zip(amazon_names,amazon_prices,amazon_ratings,amazon_totalratings,amazon_urls)
+    print(amazon_names)
+    print(amazon_prices)
+    print(amazon_ratings)
+    print(amazon_totalratings)
+    print(amazon_urls)
     if request.session.get('user_name', 0) != 0:
-        return render(request,"home/view.html",{'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
+        return render(request,"home/view.html",{ 'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
     else:
-        return render(request,"home/view.html",{'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
+        return render(request,"home/view.html",{'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
 
 def signin(request):
     if request.session.get('user_name',0) == 0 :
@@ -655,8 +734,10 @@ def Test(request):
     if request.is_ajax() and request.method=='POST':
         print("Came"+request.POST['comment_key'])
         comment_key = request.POST['comment_key']
+        model_key = request.POST['model_key']
+        mobile_object = get_object_or_404(deviceDetails, pk = model_key)
         Comments.objects.filter(pk=comment_key).delete()
-        return JsonResponse({'flag':"yes",'updated_count':len(Comments.objects.all())},status=200)
+        return JsonResponse({'flag':"yes",'updated_count':len(Comments.objects.filter(mobile = mobile_object))},status=200)
 
 @csrf_exempt
 def removeFromCompare(request):
@@ -770,23 +851,32 @@ def price_filter(request):
         spec=[]
         img=[]
         price=[]
+        search_text = '0'
         limit = request.GET['p']
         data = deviceDetails.objects.all()
         if limit=='0':
             lower = 0
             upper = 10000
+            search_text = 'Rs. 0 - 10,000'
         elif limit=='1':
             lower = 10000
             upper = 20000
+            search_text = 'Rs. 10,000 - 20,000'
         elif limit=='2':
             lower = 20000
             upper = 30000
+            search_text = 'Rs. 20,000 - 30,000'
         elif limit=='3':
             lower = 30000
             upper = 40000
+            search_text = 'Rs. 30,000 - 40,000'
         else:
             lower = 40000
             upper = 9999999999
+            search_text = 'Rs. 40,000+'
+        compare_status = []
+        fav_status = []
+        
         for row in data:
             p = eval(row.price.replace(',',''))
             if p>lower and p<upper:
@@ -796,6 +886,56 @@ def price_filter(request):
                 spec.append(row.specifications)
                 img.append(row.image_link)
                 price.append(row.price)
-#                
-        result = zip(pk_d,brand_name,mob_name,spec,img,price)
-        return render(request,"home/price_fil.html",{'result':result,'len':len(price)})
+                if len(Compare.objects.filter(mobile = get_object_or_404(deviceDetails, pk = row.pk))):
+                    compare_status.append("Remove from compare")
+                else:
+                    compare_status.append("Add to Compare")
+                if len(Favourite.objects.filter(mobile = get_object_or_404(deviceDetails, pk = row.pk))):
+                    fav_status.append("Remove from favourites")
+                else:
+                    fav_status.append("Add to Favourites")
+       
+        pages = len(price)//28
+       
+        if len(price)%28 != 0 :
+            pages += 1
+       
+        price_range = request.GET.get('p')
+        req_page = 1
+       
+        if request.GET.get('pageNext'):
+            req_page = request.GET.get('pageNext')
+            try: 
+                req_page = int(req_page)
+                req_page += 1
+            except:
+                req_page = -1
+        elif request.GET.get('pagePrev'):
+            req_page = request.GET.get('pagePrev')
+            try: 
+                req_page = int(req_page)
+                req_page -= 1
+            except:
+                req_page = -1
+        
+        print(req_page)
+
+        if req_page < 1 or req_page > pages:
+            req_page = 1
+        
+        result = zip(pk_d,brand_name,mob_name,spec,img,price,compare_status,fav_status)
+        result = sorted(result, key = lambda x:int(x[5].replace(',','')))
+
+        start = (req_page - 1)*28
+        total = len(price)
+        end = min(req_page*28,total)
+        result = result[start:end]
+        # result = zip(pk_d[start:end],brand_name[start:end],mob_name[start:end],spec[start:end],img[start:end],price[start:end],compare_status[start:end],fav_status[start:end])
+        # result = zip(pk_d,brand_name,mob_name,spec,img,price,compare_status,fav_status)
+
+        result = sorted(result, key = lambda x:int(x[5].replace(',','')))
+
+        if request.session.get('user_name', 0) != 0:
+            return render(request,"home/price_fil.html",{'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})    
+        return render(request,"home/price_fil.html",{'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
+

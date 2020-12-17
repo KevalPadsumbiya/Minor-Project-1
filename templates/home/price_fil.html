@@ -144,7 +144,7 @@
             <div class="col px-0">
                 <div class="row align-items-center justify-content-center">
                 <div class="col-lg-6 text-center">
-                    <h1 class="text-white display-1">{{search_text}}</h1>
+                    <h1 class="text-white display-1">{{searched_text}}</h1>
                 </div>
                 </div>
             </div>       
@@ -152,8 +152,17 @@
     </div>
     
 </div>
-
-    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Showing {{size}} results</h5>
+    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Showing from {{start}} to {{end}} out of {{len}} results</h5>
+    <div>
+        <center>
+        <span>
+            Page : &nbsp;
+            <a href="?p={{p}}&pagePrev={{cur_page}}"><button class='btn' style="background:  rgb(61, 112, 252);color:white;">Prev</button></a>
+            &nbsp;&nbsp;&nbsp;{{cur_page}}/{{pages}}&nbsp;&nbsp;
+            <a href="?p={{p}}&pageNext={{cur_page}}"><button class='btn' style="background:  rgb(61, 112, 252);color:white;">Next</button></a>
+        </span>
+        </center>
+    </div>
     <div class="" style="padding:15px;">
         <div id="compare_cart" style="
             right:0;
@@ -175,9 +184,8 @@
         ">
             <span id="msg"></span>
         </div>
-        <h3>{{ len }}</h3>
         <div id="products" class="row view-group" style="padding:10px;">
-            {% for pk_d,brand_name,mob_name,spec,img,price in result %}
+            {% for pk_d,brand_name,mob_name,spec,img,price,compare_status,fav_status in result %}
             <div class="item col-md-3 col-sm-6">
                 {% if compare_status == "Remove from Compare" or fav_status == "Remove from Favourites" %}
                     <div class="thumbnail card" id="box{{pk_d}}" style="border:2px solid pink; box-shadow: 0 0 5px 2px pink;">
@@ -202,7 +210,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <center>
-                                <h5>{{ price }}</h5>
+                                <h5>Rs. {{ price }}</h5>
                                     <a class="btn item_btn" style="width: 60%" name="name" href="view?model={{pk_d}}">View</a>
                                     {% if login_flag %}
                                         <div class="btn-group dropup">
@@ -210,13 +218,13 @@
                                             </button>
                                             <div class="dropdown-menu">
                                                 <!-- <a class="dropdown-item" href="#" id="{{pk}}" onclick="addToFavourite(this.id)">Add to favourite</a> -->
-                                                <button class="dropdown-item" href="#" id="{{pk}}" onclick="addToFavourite(this.id)">
+                                                <button class="dropdown-item" href="#" id="{{pk_d}}" onclick="addToFavourite(this.id)">
                                                     <!-- <input class="check" id="checkbox{{pk}}" type="checkbox"/> -->
-                                                    <span id="model1{{pk}}"> &nbsp;{{fav_status}}</span>
+                                                    <span id="model1{{pk_d}}"> &nbsp;{{fav_status}}</span>
                                                 </button>
-                                                <button class="dropdown-item" href="#" id="{{pk}}" onclick="addToCompare(this.id)">
+                                                <button class="dropdown-item" href="#" id="{{pk_d}}" onclick="addToCompare(this.id)">
                                                     <!-- <input class="check" id="checkbox{{pk}}" type="checkbox"/> -->
-                                                    <span id="model{{pk}}"> &nbsp;{{compare_status}}</span>
+                                                    <span id="model{{pk_d}}"> &nbsp;{{compare_status}}</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -230,7 +238,17 @@
         {% endfor %}
         </div>
     </div>
-
+    <div>
+        <center>
+        <span>
+            Page : &nbsp;
+            <a href="?p={{p}}&pagePrev={{cur_page}}"><button class='btn' style="background:  rgb(61, 112, 252);color:white;">Prev</button></a>
+            &nbsp;&nbsp;&nbsp;{{cur_page}}/{{pages}}&nbsp;&nbsp;
+            <a href="?p={{p}}&pageNext={{cur_page}}"><button class='btn' style="background:  rgb(61, 112, 252);color:white;">Next</button></a>
+        </span>
+        </center>
+    </div>
+    <br>
     <!-- Javascript -->
 
     <script>

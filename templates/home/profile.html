@@ -62,11 +62,12 @@
 
 <script>
 
-        function delete_com(comment_key){
+        function delete_com(comment_key,model_key){
                $.ajax({
                         type:'POST',
                         url:'{% url 'test' %}',
                         data:{
+                            model_key:model_key,
                             comment_key:comment_key,
                         },
                         success:function(response)
@@ -79,7 +80,12 @@
                             }
                             else if(flag == 'yes')
                             {
-                                alert('succ');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Comment has successfully deleted !',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                  });
                                 location.reload();
                             }
                         },
@@ -109,7 +115,7 @@
                     <td>{{ date }}</td>
                     <td>{{ comment_text }}</td>
                         {% csrf_token %}
-                    <td><button onclick="delete_com({{ pk_c }})">delete</button></td>
+                    <td><button onclick="delete_com({{pk_c}},{{pk_m}})">delete</button></td>
                     </tr>
                 {% endfor %}
             </table>

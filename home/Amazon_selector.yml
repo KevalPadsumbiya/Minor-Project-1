@@ -10,34 +10,34 @@ result:
         #     type: Text
         name:
             css: 'h2 a.a-link-normal.a-text-normal'
-            # xpath: null
+            xpath: null
             type: Text
-        # url:
-        #     css: 'h2 a.a-link-normal.a-text-normal'
-        #     # xpath: null
-        #     type: Link
-        # rating:
-        #     css: 'div.a-row.a-size-small span:nth-of-type(1)'
-        #     # xpath: null
-        #     type: Attribute
-        #     attribute: aria-label
-        # total_ratings:
-        #     css: 'div.a-row.a-size-small span:nth-of-type(2)'
-        #     # xpath: null
-        #     type: Attribute
-        #     attribute: aria-label
+        url:
+            css: 'h2 a.a-link-normal.a-text-normal'
+            xpath: null
+            type: Link
+        rating:
+            css: 'div.a-row.a-size-small span:nth-of-type(1)'
+            # xpath: null
+            type: Attribute
+            attribute: aria-label
+        total_ratings:
+            css: 'div.a-row.a-size-small span:nth-of-type(2)'
+            # xpath: null
+            type: Attribute
+            attribute: aria-label
         # reviews:
         #     css: 'div.a-row.a-size-small span:nth-of-type(2)'
         #     xpath: null
         #     type: Attribute
         #     attribute: aria-label
-        # price:
-        #     css: 'span.a-price:nth-of-type(1) span.a-offscreen'
-        #     # xpath: null
-        #     type: Text
-        img_url:
-            css: 'div img.s-image'
+        price:
+            css: 'span.a-price:nth-of-type(1) span.a-offscreen'
             # xpath: null
-            # multiple: True
-            type: Attribute
-            attribute: src
+            type: Text
+        # img_url:
+        #     css: 'div img.s-image'
+        #     # xpath: null
+        #     # multiple: True
+        #     type: Attribute
+        #     attribute: src
