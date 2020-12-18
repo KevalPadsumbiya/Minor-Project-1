@@ -342,10 +342,10 @@ def model(request):
     result1 = zip(varient,price,status,flipkart_url,stars,ratings,reviews)
 
 
-    f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/temp.txt","r")
+    f = open("home/temp.txt","r")
     data = f.readlines()
 
-    e = Extractor.from_yaml_file('C:/Users/Lenovo/Desktop/Last-MP1/Minor-Project-1/home/Amazon_selector.yml')
+    e = Extractor.from_yaml_file('home/Amazon_selector.yml')
     headers = {
             'dnt': '1',
             'upgrade-insecure-requests': '1',
