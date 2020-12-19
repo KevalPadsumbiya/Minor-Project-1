@@ -18,7 +18,7 @@
         <br>
         <div id="search-bar">
             <center>
-                <form autocomplete="off" action="" method="post">
+                <form autocomplete="off" action="{% url 'byBrand' %}" method="post">
                     {% csrf_token %}
                     <div class="autocomplete">
                     <input type="text" id="search_bar" name="search_text" placeholder="{{search_text}}" >
