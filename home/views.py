@@ -396,43 +396,6 @@ def compare(request):
         return render(request, "home/compare.html", {'list':dumps(d),'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:
         return render(request, "home/compare.html", {'list':dumps(d),'result': result})
-<<<<<<< HEAD
-=======
-
-
-
-
-# def news(request):
-
-#     url = 'https://news.google.com/search?gl=IN&pz=1&cf=all&hl=en-IN&q=topic:smartphones&ceid=IN:en'
-#     data = requests.get(url).text
-#     soup = BeautifulSoup(data,'lxml')
-
-#     desc = []
-#     by = []
-#     news_url = []
-#     image_url = []
-#     cnt = 0
-    
-#     for news in soup.find_all('article',class_="MQsxIb"):
-#         temp = news.find('a',class_="DY5T1d")
-#         desc.append(temp.text)
-#         news_url.append('https://news.google.com/'+temp.attrs.get("href")[2:])
-#         by.append(news.find('a',class_="wEwyrc").text)
-#         cnt += 1
-#         if cnt == 25:
-#             break
-
-#     for news_by in soup.find_all('img',class_="tvs3Id"):
-#         image_url.append(news_by.attrs.get("src"))
-#         cnt -= 1
-#         if cnt == 0:
-#             break
-
-#     result = zip(desc,news_url,by,image_url)
-    
-#     return render(request,"home/news.html",{'result':result})
->>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
 
 def news(request):
     url = 'https://news.google.com/search?gl=IN&pz=1&cf=all&hl=en-IN&q=topic:smartphones&ceid=IN:en'
@@ -798,22 +761,13 @@ def profile(request):
 
 def price_filter(request):
     if request.method == 'GET':
-<<<<<<< HEAD
-<<<<<<< HEAD
         start_time = time.time()
-=======
-=======
->>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
         fhandle = open('items.txt')
         text = fhandle.read()
         fhandle.close()
         l = text.split(',')
         d = dict()
         d["data"] = l
-<<<<<<< HEAD
->>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
-=======
->>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
         pk_d=[]
         brand_name=[]
         mob_name=[]
@@ -906,16 +860,7 @@ def price_filter(request):
         result = sorted(result, key = lambda x:int(x[5].replace(',','')))
         print(time.time()-start_time)
         if request.session.get('user_name', 0) != 0:
-<<<<<<< HEAD
-<<<<<<< HEAD
-            return render(request,"home/price_fil.html",{'time':time.time()-start_time,'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})    
-        return render(request,"home/price_fil.html",{'time':time.time()-start_time,'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
-=======
+
             return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
         return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
->>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
-=======
-            return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
-        return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
->>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
 
