@@ -64,7 +64,7 @@ def byBrand(request):
     l = ['Mi','Realme','Samsung','OPPO','Apple','Asus','Vivo','Honor','POCO','Micromax','Motorola','Google','HTC','Sony','Huawei','Intex','Nokia','LG','Panasonic','Nubia']
     # l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','Mi','Tecno','POCO','Realme']
     if 'search_text' in request.POST:
-        queryset = list(deviceDetails.objects.filter(mobile_name__startswith=request.POST.get('search_text')))
+        queryset = list(deviceDetails.objects.filter(mobile_name__contains=request.POST.get('search_text')))
         text = request.POST.get('search_text')
     elif request.GET.get('brand') in l:
         queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
@@ -155,7 +155,12 @@ def price_scraper(url):
     return soup.div.div.contents[0]
 
 def model(request):
-
+    fhandle = open('items.txt')
+    text = fhandle.read()
+    fhandle.close()
+    li = text.split(',')
+    d = dict()
+    d["data"] = li
     # print(request.GET.get('model'))
     l = []
     # result = []
@@ -281,10 +286,10 @@ def model(request):
     result1 = zip(varient,price,status,flipkart_url,stars,ratings,reviews)
 
 
-    f = open("C:/Users/Lenovo/Desktop/Github Repo/MInot-Project-1/home/temp.txt","r")
+    f = open("home/temp.txt","r")
     data = f.readlines()
 
-    e = Extractor.from_yaml_file('C:/Users/Lenovo/Desktop/Last-MP1/Minor-Project-1/home/Amazon_selector.yml')
+    e = Extractor.from_yaml_file('home/Amazon_selector.yml')
     headers = {
             'dnt': '1',
             'upgrade-insecure-requests': '1',
@@ -343,9 +348,9 @@ def model(request):
     print(amazon_totalratings)
     print(amazon_urls)
     if request.session.get('user_name', 0) != 0:
-        return render(request,"home/view.html",{ 'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
+        return render(request,"home/view.html",{'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
     else:
-        return render(request,"home/view.html",{'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
+        return render(request,"home/view.html",{'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
 
 def signin(request):
     if request.session.get('user_name',0) == 0 :
@@ -360,7 +365,12 @@ def signup(request):
 def compare(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
-
+    fhandle = open('items.txt')
+    text = fhandle.read()
+    fhandle.close()
+    li = text.split(',')
+    d = dict()
+    d["data"] = li
     # ids = request.GET.get('ids').split('-')
     data = Compare.objects.filter(username = get_object_or_404(UserData, user_name = request.session['user_name']))
     result = []
@@ -383,15 +393,20 @@ def compare(request):
     
     result = zip(name,spec,image_link,p_key)
     if request.session.get('user_name', 0) != 0:
-        return render(request, "home/compare.html", {'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
+        return render(request, "home/compare.html", {'list':dumps(d),'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:
-        return render(request, "home/compare.html", {'result': result})
+        return render(request, "home/compare.html", {'list':dumps(d),'result': result})
 
 def news(request):
     url = 'https://news.google.com/search?gl=IN&pz=1&cf=all&hl=en-IN&q=topic:smartphones&ceid=IN:en'
     data = requests.get(url).text
     soup = BeautifulSoup(data, 'lxml')
-
+    fhandle = open('items.txt')
+    text = fhandle.read()
+    fhandle.close()
+    li = text.split(',')
+    d = dict()
+    d["data"] = li
     desc = []
     by = []
     news_url = []
@@ -415,9 +430,9 @@ def news(request):
 
     result = zip(desc, news_url, by, image_url)
     if request.session.get('user_name', 0) != 0:
-        return render(request, "home/news.html", {'result': result,'login_flag':True,'user_name':request.session['user_name']})
+        return render(request, "home/news.html", {'list':dumps(d),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:
-        return render(request, "home/news.html", {'result': result})
+        return render(request, "home/news.html", {'list':dumps(d),'result': result})
 
 
 @csrf_exempt
@@ -507,7 +522,12 @@ def addToFavourite(request):
 def favourite(request):
     if request.session.get('user_name',0) == 0 :
         return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
-
+    fhandle = open('items.txt')
+    text = fhandle.read()
+    fhandle.close()
+    li = text.split(',')
+    d = dict()
+    d["data"] = li
     data = Favourite.objects.filter(username = get_object_or_404(UserData, user_name = request.session['user_name']))
     result = []
     name = []
@@ -527,9 +547,9 @@ def favourite(request):
         # spec.append(model[2].split(','))
     result = zip(name,image_link,p_key)
     if request.session.get('user_name', 0) != 0:
-        return render(request, "home/favourite.html", {'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
+        return render(request, "home/favourite.html", {'list':dumps(d),'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:
-        return render(request, "home/favourite.html", {'result': result})
+        return render(request, "home/favourite.html", {'list':dumps(d),'result': result})
 
 @csrf_exempt
 def postComment(request):
@@ -741,7 +761,16 @@ def profile(request):
 
 def price_filter(request):
     if request.method == 'GET':
+<<<<<<< HEAD
         start_time = time.time()
+=======
+        fhandle = open('items.txt')
+        text = fhandle.read()
+        fhandle.close()
+        l = text.split(',')
+        d = dict()
+        d["data"] = l
+>>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
         pk_d=[]
         brand_name=[]
         mob_name=[]
@@ -834,6 +863,11 @@ def price_filter(request):
         result = sorted(result, key = lambda x:int(x[5].replace(',','')))
         print(time.time()-start_time)
         if request.session.get('user_name', 0) != 0:
+<<<<<<< HEAD
             return render(request,"home/price_fil.html",{'time':time.time()-start_time,'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})    
         return render(request,"home/price_fil.html",{'time':time.time()-start_time,'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
+=======
+            return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
+        return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
+>>>>>>> 6dcdf3a2df3aacab813e04823d31762ae9cfa59b
 
