@@ -116,3 +116,153 @@
 # #             print(row[1]+'---'+'Not Found')
 #             # f1.write(row[1]+'---'+'Not Found'+'\n')
 #         # break
+
+
+
+
+
+
+
+
+# param = dict()
+    # param['q'] = queryset.split('---')[1]
+    # url = "http://flipkart.com/search?"+urllib.parse.urlencode(param)
+    # e = Extractor.from_yaml_file('C:/Users/Lenovo/Desktop/Minor-Project-I-master/home/selector.yml')
+    # r = requests.get(url)
+    # data = e.extract(r.text)
+    # j=0
+    # color=list()
+    # variant=dict()
+    # price_variant=dict()
+    # Links = []
+    # for links in data['products']:
+    #     color.clear()
+    #     variant.clear()
+    #     price_variant.clear()
+    #     url = 'http://flipkart.com'+links['url']
+    #     r = requests.get(url)
+    #     product = SoupStrainer('div',{'class':'_3wmLAA'})
+    #     soup = BeautifulSoup(r.text,'html.parser',parse_only=product)
+    #     if len(soup)==1:
+    #         i=0
+    #         for s in soup.div.children:
+    #             i=i+1
+    #         if i>1:
+    #             for s in soup.div.children:
+    #                 for d in s.div.ul.children:
+    #                     if s.div.span.string == 'Color':
+    #                         for q in d.children:
+    #                             if q.div['class'] == ['_3Oikkn', '_3_ezix', '_2KarXJ']:
+    #                                 color.append(q.div.contents[0])
+    #                     else:
+    #                         price = price_scraper('http://flipkart.com'+d.a['href'])
+    #                         # print(d.a['href'])
+    #                         print('http://flipkart.com'+d.a['href'])
+    #                         # if 'http://flipkart.com'+d.a['href'] not in Links:
+    #                         Links.append('http://flipkart.com'+d.a['href'])
+    #                         # links.append('http://flipkart.com'+d.a['href'])
+    #                         price_variant[d.div.div.contents[0]]=price
+    #                         if variant.get(s.div.span.string,False):
+    #                             variant[s.div.span.string].append(d.div.div.contents[0])
+    #                         else:
+    #                             variant[s.div.span.string]=list()
+    #                             variant[s.div.span.string].append(d.div.div.contents[0])
+    #             break
+    #         else:
+    #             j=j+1
+    #             if j>10:
+    #                 price_variant['one']=price_scraper('http://flipkart.com'+data['products'][0]['links'])
+    #                 break
+    #     else:
+    #         j=j+1
+    #         if j>10:
+    #             price_variant['one']=price_scraper('http://flipkart.com'+data['products'][0]['links'])
+    #             break
+    # print(color)
+    # print(variant)
+    # print(price_variant)
+    # print(Links)
+    # result1 = []
+    # l1 = [] # var
+    # l2 = [] # price
+    # l3 = [] # url
+    # for var in variant['Storage']:
+    #     print(price_variant[var])
+    #     # result1.append([var,price_variant[var][1:]])
+    #     l1.append(var)
+    #     l2.append(price_variant[var][1:])
+    # for el in l1:
+    #     for url in Links:
+    #         if el.split()[0]+'-gb' in url:
+    #             l3.append(url)
+    # # print(result1)
+    # print(l1)
+    # print(l2)
+    # print(l3)
+    # result1 = zip(l1,l2,l3)
+
+
+
+
+# def byBrand(request):
+#     l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','MI','Tecno','POCO','Realme']
+#     if request.GET.get('brand') in l:
+#         queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
+#         names = []
+#         links = []
+#         p_key = []
+#         result = []
+#         for item in queryset:
+#             # print(item.pk)
+#             p_key.append(item.pk)
+#             item = str(item)
+#             item = item.split('---')
+#             names.append(item[1])
+#             links.append(item[3])
+#         # for (a, b, c) in zip(names, links, p_key): 
+#         #     result.append([a,b,c])
+#         # print(result)
+#         result = zip(names,links,p_key)
+#         return render(request,"home/display.html",{'searched' :True,'search_text':request.GET.get('brand'),'result':result,'size':len(names)})
+#     else:
+#         return render(request,"home/index.html",{'searched' :False})
+
+
+
+
+
+
+
+
+
+
+# def news(request):
+
+#     url = 'https://news.google.com/search?gl=IN&pz=1&cf=all&hl=en-IN&q=topic:smartphones&ceid=IN:en'
+#     data = requests.get(url).text
+#     soup = BeautifulSoup(data,'lxml')
+
+#     desc = []
+#     by = []
+#     news_url = []
+#     image_url = []
+#     cnt = 0
+    
+#     for news in soup.find_all('article',class_="MQsxIb"):
+#         temp = news.find('a',class_="DY5T1d")
+#         desc.append(temp.text)
+#         news_url.append('https://news.google.com/'+temp.attrs.get("href")[2:])
+#         by.append(news.find('a',class_="wEwyrc").text)
+#         cnt += 1
+#         if cnt == 25:
+#             break
+
+#     for news_by in soup.find_all('img',class_="tvs3Id"):
+#         image_url.append(news_by.attrs.get("src"))
+#         cnt -= 1
+#         if cnt == 0:
+#             break
+
+#     result = zip(desc,news_url,by,image_url)
+    
+#     return render(request,"home/news.html",{'result':result})

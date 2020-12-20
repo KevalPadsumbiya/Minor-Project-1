@@ -18,6 +18,7 @@ from django.core.mail import send_mail
 import threading
 from django.http import HttpResponse
 from django.core.paginator import Paginator
+import time
 
 
 # def index(request):
@@ -69,6 +70,9 @@ def byBrand(request):
         queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
         text = request.GET.get('brand')
         # print(request.GET.get('brand'))
+    else:
+        queryset = list(deviceDetails.objects.filter(mobile_name__startswith=request.POST.get('brand')))
+        # text = request.POST.get('search_text')
     # print(queryset)
     names = []
     links = []
@@ -100,38 +104,49 @@ def byBrand(request):
     # for (a, b, c) in zip(names, links, p_key): 
     #     result.append([a,b,c])
         # print(result)
-    result = zip(names,links,p_key,compare_status,fav_status)
+
+    pages = len(names)//28
+       
+    if len(names)%28 != 0 :
+        pages += 1
+    
+    req_page = 1
+    
+    if request.GET.get('pageNext'):
+        req_page = request.GET.get('pageNext')
+        try: 
+            req_page = int(req_page)
+            req_page += 1
+        except:
+            req_page = -1
+    elif request.GET.get('pagePrev'):
+        req_page = request.GET.get('pagePrev')
+        try: 
+            req_page = int(req_page)
+            req_page -= 1
+        except:
+            req_page = -1
+    
+    print(req_page)
+
+    if req_page < 1 or req_page > pages:
+        req_page = 1
+
+    start = (req_page - 1)*28
+    total = len(names)
+    end = min(req_page*28,total)
+    # print(pages)
+    # print(req_page)
+    # result = result[start:end]
+    result = zip(names[start:end],links[start:end],p_key[start:end],compare_status[start:end],fav_status[start:end])
+    # result = zip(names,links,p_key,compare_status,fav_status)
 
     if request.session.get('user_name',0)!=0:
         return render(request, "home/display.html",
-                          {'searched': True, 'search_text': text, 'result': result,
+                          {'start':start+1,'end':end,'pages':pages,'cur_page':req_page, 'searched': True, 'search_text': text, 'result': result,
                            'size': len(names), 'list': dumps(d), 'login_flag':True,'user_name':request.session['user_name']})
     else:
-        return render(request,"home/display.html",{'searched' :True,'search_text':text,'result':result,'size':len(names),'list':dumps(d)})
-
-
-# def byBrand(request):
-#     l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','MI','Tecno','POCO','Realme']
-#     if request.GET.get('brand') in l:
-#         queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
-#         names = []
-#         links = []
-#         p_key = []
-#         result = []
-#         for item in queryset:
-#             # print(item.pk)
-#             p_key.append(item.pk)
-#             item = str(item)
-#             item = item.split('---')
-#             names.append(item[1])
-#             links.append(item[3])
-#         # for (a, b, c) in zip(names, links, p_key): 
-#         #     result.append([a,b,c])
-#         # print(result)
-#         result = zip(names,links,p_key)
-#         return render(request,"home/display.html",{'searched' :True,'search_text':request.GET.get('brand'),'result':result,'size':len(names)})
-#     else:
-#         return render(request,"home/index.html",{'searched' :False})
+        return render(request,"home/display.html",{'start':start+1,'end':end,'pages':pages,'cur_page':req_page,'searched' :True,'search_text':text,'result':result,'size':len(names),'list':dumps(d)})
 
 def price_scraper(url):
     r = requests.get(url)
@@ -205,82 +220,6 @@ def model(request):
             delete_right.append(0)
 
     result = zip(names,dates,comment_text,p_key,vote_count,up_voted,down_voted,delete_right)
-    # param = dict()
-    # param['q'] = queryset.split('---')[1]
-    # url = "http://flipkart.com/search?"+urllib.parse.urlencode(param)
-    # e = Extractor.from_yaml_file('C:/Users/Lenovo/Desktop/Minor-Project-I-master/home/selector.yml')
-    # r = requests.get(url)
-    # data = e.extract(r.text)
-    # j=0
-    # color=list()
-    # variant=dict()
-    # price_variant=dict()
-    # Links = []
-    # for links in data['products']:
-    #     color.clear()
-    #     variant.clear()
-    #     price_variant.clear()
-    #     url = 'http://flipkart.com'+links['url']
-    #     r = requests.get(url)
-    #     product = SoupStrainer('div',{'class':'_3wmLAA'})
-    #     soup = BeautifulSoup(r.text,'html.parser',parse_only=product)
-    #     if len(soup)==1:
-    #         i=0
-    #         for s in soup.div.children:
-    #             i=i+1
-    #         if i>1:
-    #             for s in soup.div.children:
-    #                 for d in s.div.ul.children:
-    #                     if s.div.span.string == 'Color':
-    #                         for q in d.children:
-    #                             if q.div['class'] == ['_3Oikkn', '_3_ezix', '_2KarXJ']:
-    #                                 color.append(q.div.contents[0])
-    #                     else:
-    #                         price = price_scraper('http://flipkart.com'+d.a['href'])
-    #                         # print(d.a['href'])
-    #                         print('http://flipkart.com'+d.a['href'])
-    #                         # if 'http://flipkart.com'+d.a['href'] not in Links:
-    #                         Links.append('http://flipkart.com'+d.a['href'])
-    #                         # links.append('http://flipkart.com'+d.a['href'])
-    #                         price_variant[d.div.div.contents[0]]=price
-    #                         if variant.get(s.div.span.string,False):
-    #                             variant[s.div.span.string].append(d.div.div.contents[0])
-    #                         else:
-    #                             variant[s.div.span.string]=list()
-    #                             variant[s.div.span.string].append(d.div.div.contents[0])
-    #             break
-    #         else:
-    #             j=j+1
-    #             if j>10:
-    #                 price_variant['one']=price_scraper('http://flipkart.com'+data['products'][0]['links'])
-    #                 break
-    #     else:
-    #         j=j+1
-    #         if j>10:
-    #             price_variant['one']=price_scraper('http://flipkart.com'+data['products'][0]['links'])
-    #             break
-    # print(color)
-    # print(variant)
-    # print(price_variant)
-    # print(Links)
-    # result1 = []
-    # l1 = [] # var
-    # l2 = [] # price
-    # l3 = [] # url
-    # for var in variant['Storage']:
-    #     print(price_variant[var])
-    #     # result1.append([var,price_variant[var][1:]])
-    #     l1.append(var)
-    #     l2.append(price_variant[var][1:])
-    # for el in l1:
-    #     for url in Links:
-    #         if el.split()[0]+'-gb' in url:
-    #             l3.append(url)
-    # # print(result1)
-    # print(l1)
-    # print(l2)
-    # print(l3)
-    # result1 = zip(l1,l2,l3)
 
     mobile_name = queryset.split('|||')[1]
     # print(mobile_name)
@@ -316,12 +255,12 @@ def model(request):
                         price.append(rs[1:])
                         star = item.find('div',class_="_3LWZlK").text
                         stars.append(star)
-                        print(item.find('div',class_="_3LWZlK").text)
+                        # print(item.find('div',class_="_3LWZlK").text)
                         rating = item.find('span',class_="_2_R_DZ").span.span.text
                         ratings.append(rating)
                         print(rating)
                         text = str(item.find('span',class_="_2_R_DZ").span)
-                        print(item.find('span',class_="_2_R_DZ").span)
+                        # print(item.find('span',class_="_2_R_DZ").span)
                         i = text.find('Reviews')-2
                         review = ""
                         while text[i] != '>':
@@ -330,7 +269,7 @@ def model(request):
                         review = review[::-1] + ' Reviews'
                         review = review.strip()
                         reviews.append(review)
-                        print(reviews)
+                        # print(reviews)
                         status.append(current_status)
                         flipkart_url.append("https://www.flipkart.com"+item['href'])
                         # print("https://www.flipkart.com"+item['href'])
@@ -442,54 +381,11 @@ def compare(request):
         spec.append(model[3].split('---'))
         # print()
     
-    # print(data)
-    # for id in ids:
-    #     temp = []
-    #     queryset = str(deviceDetails.objects.get(pk=id))
-    #     name.append(queryset.split('---')[1])
-    #     l = queryset.split('---')[2]
-    #     image_link.append(queryset.split('---')[3])
-    #     spec.append(l.split(','))
-    #     # print(queryset.split('---')[1])
     result = zip(name,spec,image_link,p_key)
     if request.session.get('user_name', 0) != 0:
         return render(request, "home/compare.html", {'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:
         return render(request, "home/compare.html", {'result': result})
-
-
-
-
-# def news(request):
-
-#     url = 'https://news.google.com/search?gl=IN&pz=1&cf=all&hl=en-IN&q=topic:smartphones&ceid=IN:en'
-#     data = requests.get(url).text
-#     soup = BeautifulSoup(data,'lxml')
-
-#     desc = []
-#     by = []
-#     news_url = []
-#     image_url = []
-#     cnt = 0
-    
-#     for news in soup.find_all('article',class_="MQsxIb"):
-#         temp = news.find('a',class_="DY5T1d")
-#         desc.append(temp.text)
-#         news_url.append('https://news.google.com/'+temp.attrs.get("href")[2:])
-#         by.append(news.find('a',class_="wEwyrc").text)
-#         cnt += 1
-#         if cnt == 25:
-#             break
-
-#     for news_by in soup.find_all('img',class_="tvs3Id"):
-#         image_url.append(news_by.attrs.get("src"))
-#         cnt -= 1
-#         if cnt == 0:
-#             break
-
-#     result = zip(desc,news_url,by,image_url)
-    
-#     return render(request,"home/news.html",{'result':result})
 
 def news(request):
     url = 'https://news.google.com/search?gl=IN&pz=1&cf=all&hl=en-IN&q=topic:smartphones&ceid=IN:en'
@@ -845,6 +741,7 @@ def profile(request):
 
 def price_filter(request):
     if request.method == 'GET':
+        start_time = time.time()
         pk_d=[]
         brand_name=[]
         mob_name=[]
@@ -874,6 +771,7 @@ def price_filter(request):
             lower = 40000
             upper = 9999999999
             search_text = 'Rs. 40,000+'
+ 
         compare_status = []
         fav_status = []
         
@@ -934,8 +832,8 @@ def price_filter(request):
         # result = zip(pk_d,brand_name,mob_name,spec,img,price,compare_status,fav_status)
 
         result = sorted(result, key = lambda x:int(x[5].replace(',','')))
-
+        print(time.time()-start_time)
         if request.session.get('user_name', 0) != 0:
-            return render(request,"home/price_fil.html",{'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})    
-        return render(request,"home/price_fil.html",{'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
+            return render(request,"home/price_fil.html",{'time':time.time()-start_time,'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})    
+        return render(request,"home/price_fil.html",{'time':time.time()-start_time,'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
 

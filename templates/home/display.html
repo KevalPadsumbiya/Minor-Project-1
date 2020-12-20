@@ -152,8 +152,31 @@
     </div>
     
 </div>
+    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Showing from {{start}} to {{end}} out of {{size}} results</h5>
+    <!-- <h5>&nbsp;&nbsp;&nbsp;&nbsp;Showing {{size}} results</h5> -->
+    <div>
+        <center>
+        <span>
+            Page : &nbsp;
+            <a href="?brand={{search_text}}&pagePrev={{cur_page}}">
+                {% if cur_page == 1 %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;" disabled>Prev</button>
+                    {% else %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;">Prev</button>
+                {% endif %}
+            </a>
+            &nbsp;&nbsp;&nbsp;{{cur_page}}/{{pages}}&nbsp;&nbsp;
+            <a href="?brand={{search_text}}&pageNext={{cur_page}}">
+                {% if cur_page == pages %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;" disabled>Next</button>
+                    {% else %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;">Next</button>
 
-    <h5>&nbsp;&nbsp;&nbsp;&nbsp;Showing {{size}} results</h5>
+                {% endif %}
+            </a>
+        </span>
+        </center>
+    </div>
     <div class="" style="padding:15px;">
         <div id="compare_cart" style="
             right:0;
@@ -230,6 +253,30 @@
         </div>
     </div>
 
+    <div>
+        <center>
+        <span>
+            Page : &nbsp;
+            <a href="?brand={{search_text}}&pagePrev={{cur_page}}">
+                {% if cur_page == 1 %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;" disabled>Prev</button>
+                    {% else %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;">Prev</button>
+                {% endif %}
+            </a>
+            &nbsp;&nbsp;&nbsp;{{cur_page}}/{{pages}}&nbsp;&nbsp;
+            <a href="?brand={{search_text}}&pageNext={{cur_page}}">
+                {% if cur_page == pages %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;" disabled>Next</button>
+                    {% else %}
+                    <button class='btn' style="background:  rgb(61, 112, 252);color:white;">Next</button>
+
+                {% endif %}
+            </a>
+        </span>
+        </center>
+    </div>
+    <br>
     <!-- Javascript -->
 
     <script>

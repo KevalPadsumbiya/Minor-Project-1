@@ -17,16 +17,16 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
     <!-- Nucleo Icons -->
-    <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-icons.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-svg.css' %}"/>
+    <!-- <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-icons.css' %}"/> -->
+    <!-- <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-svg.css' %}"/> -->
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" type="text/css" href="../../static/css/font-awesome.css "/>
-    <link rel="stylesheet" type="text/css" href="../../static/css/nucleo-svg.css "/>
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/css/font-awesome.css "/> -->
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/css/nucleo-svg.css "/> -->
     <link rel="stylesheet" type="text/css" href="{% static '/css/font-awesome.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static '/css/nucleo-svg.css' %}"/>
     <!-- CSS Files -->
-    <link rel="stylesheet" type="text/css" href="../../static/css/argon-design-system.css?v=1.2.0"/>
-    <link rel="stylesheet" type="text/css" href="{% static '/css/argon-design-system.css?v=1.2.0' %}"/>
+    <!-- <link rel="stylesheet" type="text/css" href="/home/argon-design-system.css"/> -->
+    <link rel="stylesheet" type="text/css" href="{% static '/css/argon-design-system.css' %}"/>
 
     <style>
         /*the container must be positioned relative:*//**/
@@ -64,6 +64,7 @@
         color: #ffffff;
         }
         .dropdown-item {
+            height:33px; display:flex; align-items:center;
             transition: 0.2s;
         }
 
@@ -285,7 +286,7 @@
                                                                      class="fas fa-chevron-down"></i></span>
                     </a>
                     <div class="dropdown-menu">
-                        <a href="byBrand?brand=Samsung" class="dropdown-item">Samsung</a>
+                        <a href="byBrand?brand=Samsung" class="dropdown-item" style="height:30px; display:flex; align-items:center;">Samsung</a>
                         <a href="byBrand?brand=Apple" class="dropdown-item">Apple</a>
                         <a href="byBrand?brand=OPPO" class="dropdown-item">OPPO</a>
                         <a href="byBrand?brand=Vivo" class="dropdown-item">VIVO</a>
@@ -303,6 +304,7 @@
                         <a href="byBrand?brand=Panasonic" class="dropdown-item">Panasonic</a>
                         <a href="byBrand?brand=Nubia" class="dropdown-item">Nubia</a>
                     </div>
+
 
                 </li>
                 <li class="nav-item dropdown">
