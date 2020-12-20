@@ -63,10 +63,10 @@ def byBrand(request):
     l = ['Mi','Realme','Samsung','OPPO','Apple','Asus','Vivo','Honor','POCO','Micromax','Motorola','Google','HTC','Sony','Huawei','Intex','Nokia','LG','Panasonic','Nubia']
     # l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','Mi','Tecno','POCO','Realme']
     if 'search_text' in request.POST:
-        queryset = list(deviceDetails.objects.filter(mobile_name__startswith=request.POST.get('search_text')))
+        queryset = list(deviceDetails.objects.filter(mobile_name__contains=request.POST.get('search_text')))
         text = request.POST.get('search_text')
     elif request.GET.get('brand') in l:
-        queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
+        queryset = list(deviceDetails.objects.filter(brand_name=request.zGET.get('brand')))
         text = request.GET.get('brand')
         # print(request.GET.get('brand'))
     # print(queryset)
@@ -845,6 +845,12 @@ def profile(request):
 
 def price_filter(request):
     if request.method == 'GET':
+        fhandle = open('items.txt')
+        text = fhandle.read()
+        fhandle.close()
+        l = text.split(',')
+        d = dict()
+        d["data"] = l
         pk_d=[]
         brand_name=[]
         mob_name=[]
@@ -936,6 +942,6 @@ def price_filter(request):
         result = sorted(result, key = lambda x:int(x[5].replace(',','')))
 
         if request.session.get('user_name', 0) != 0:
-            return render(request,"home/price_fil.html",{'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})    
-        return render(request,"home/price_fil.html",{'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
+            return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
+        return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
 
