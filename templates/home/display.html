@@ -199,7 +199,12 @@
         ">
             <span id="msg"></span>
         </div>
-    
+        <script>
+            function load(n){
+                document.getElementById(n+"_load").style.display = "none";
+                document.getElementById(n+"_img").style.display = "block";
+            }
+        </script>
         <div id="products" class="row view-group" style="padding:10px;">
             {% for model,link,pk,compare_status,fav_status in result %}
             <div class="item col-md-3 col-sm-6">
@@ -219,7 +224,8 @@
                         </div>
                     {% else %}
                         <div class="img-event">
-                            <center><img class="group list-group-image img-fluid" src="{{link}}" alt=""/></center>
+                            <center><div class="loader" id="{{ pk }}_load"></div></center>
+                            <center><img id="{{ pk}}_img"  style="display: none" onload="load({{ pk }})" class="group list-group-image img-fluid" src="{{link}}" alt=""/></center>
                         </div>
                     {% endif %}
                     <div class="caption card-body">
