@@ -272,40 +272,53 @@
     <center>
         <h1 style="color:dodgerblue;"><i class="fa fa-comments" aria-hidden="true"></i>
             &nbsp;Comments <span style="font-size: 35px;" id="num_of_comments">({{count}})</span></h1><br>
-        {% if login_flag %}
+        {% if login_flag and email_verified %}
             <button class="btn btn-primary " onclick="makeThisVisible()">Write Comment?</button>
+            {% elif email_verified ==  False%}
+                <!-- <b>Please verify your email to comment !</b><br> -->
+                <div class="alert alert-warning" style=" width:90%; color:white; font-size:16px; ">
+                    Please verify your email to comment !
+                </div>
+                <button type="button" class="btn btn-primary" id="" onclick="verifyEmail()">Verify</button>
             {% else %}
                 <b>Please login to write comment(s).</b>
         {% endif %}
-        {% if count  == 0 %}
+        {% if count  == 0  and email_verified %}
             <br><br>
+            <!-- <div class="alert alert-success" style=" width:90%; color:black; font-size:16px; display:none;" id="be_first">
+                Be the first to comment !
+            </div> -->
+            
             <div class="alert alert-success" style=" width:90%; color:black; font-size:16px;">
                 Be the first to comment !
             </div>
         {% endif %}
+        <br>
         <div class="alert alert-success" style=" width:90%; color:black; font-size:16px; display:none;" id="be_first">
             Be the first to comment !
         </div>
         <br>
-        <form style="width: 50%; display:none;" id="comment" method="post">
-            {% csrf_token %}
-           <br>
-            <div class="form-group">
-            <textarea class="form-control" id="comment_text" rows="3" placeholder="Type your comment here"></textarea>
+        {% if email_verified %}
+            <form style="width: 50%; display:none;" id="comment" method="post">
+                {% csrf_token %}
             <br>
-                <button type="button" class="btn btn-primary" id="{{pk}}" onclick="postComment(this.id)">Post</button>
-        </div>
-        </form><br>
-        <table class="options" id="options" onclick="hideThis()" style="display: none; margin-left:42%;">
-            <tr>
-                <td>        
-                <button class="btn btn-primary cancel" id="cancel" >Cancel</button>
-                </td>
-                <td>        
-                    <button class="btn btn-primary preview" id="preview" >Preview</button>
-                </td>
-            </tr>
-        </table>
+                <div class="form-group">
+                <textarea class="form-control" id="comment_text" rows="3" placeholder="Type your comment here"></textarea>
+                <!-- <br> -->
+                    <!-- <button type="button" class="btn btn-primary" id="{{pk}}" onclick="postComment(this.id)">Post</button> -->
+                </div>
+            </form><br>
+            <table class="options" id="options" onclick="hideThis()" style="display: none; margin-left:42%;">
+                <tr>
+                    <td>        
+                    <button class="btn  cancel" id="cancel" style="background: red; color:white;">Cancel</button>
+                    </td>
+                    <td>        
+                        <button type="button" class="btn btn-primary" id="{{pk}}" onclick="postComment(this.id)">Post</button>
+                    </td>
+                </tr>
+            </table>
+        {% endif %}
         <br>
     {% for name,date,comment,p_key,vote_count,up_voted,down_voted,delete_right in result %}
         <table style="border: 1px solid lightgrey; width:90%;" id="comment{{p_key}}">
@@ -589,6 +602,121 @@
                     
                 }
               });
+        }
+
+        function verifyEmail(){
+            Swal.fire({
+                 title: 'Please enter you email',
+                html: '<input type="email" id="mail" class="swal2-input" placeholder="Email ID">',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Send OTP',
+                focusConfirm: false,
+                preConfirm:() => {
+                    mail = Swal.getPopup().querySelector('#mail').value;
+                    if(!mail)
+                        Swal.showValidationMessage('Please Enter Email');
+                    else{
+                    $.ajax({
+                    type:'POST',
+                    url:'{% url 'forgot_validate' %}',
+                    data:{
+                        mail:mail,
+                        otp_verification:'1',
+                    },
+                    success:function(response){
+                        flag = response['flag'];
+                        if(flag=="no") {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Please Enter Registered Email ID',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                            var timeDelay = 2000;
+                            setTimeout(forgot, timeDelay);
+                        }
+                        else{
+                            Swal.showLoading();
+                            Swal.fire({
+                            icon: 'success',
+                            title: 'OTP sent Succesfully to registered email id',
+                            showConfirmButton: false,
+                            timer: 2000
+                          });
+
+
+
+                          sent_otp = response['sent_otp'];
+                          Swal.fire({
+                            title: 'Please enter otp : '+sent_otp,
+                            html: '<input type="text" id="otp" class="swal2-input" placeholder="OTP ID">',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Verify OTP',
+                            focusConfirm: false,
+                            preConfirm:() => {
+                            otp = Swal.getPopup().querySelector('#otp').value;
+                            if(!otp)
+                                Swal.showValidationMessage('Please Enter OTP');
+                            else{
+                            $.ajax({
+                            type:'POST',
+                            url:'{% url 'verify_otp' %}',
+                            data:{
+                                entered_otp:otp,
+                                sent_otp:sent_otp,
+                                mail:mail,
+                            },
+                            success:function(response){
+                                flag1 = response['flag'];
+                                if(flag1 == "no") {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Please Enter Valid OTP',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    });
+                                    var timeDelay = 2000;
+                                    setTimeout(forgot, timeDelay);
+                                }
+                                else{
+                                    Swal.showLoading();
+                                    Swal.fire({
+                                    icon: 'success',
+                                    title: 'OTP Verified !',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });                          
+                                location.reload();    
+                                }
+                            },
+                            error:function(response){
+                                alert(response["responseJSON"]["error"]);
+                            }
+                        });
+                        }
+                        }
+                    });
+
+
+
+
+
+
+
+                        }
+                    },
+                    error:function(response){
+                        alert(response["responseJSON"]["error"]);
+                    }
+                });
+                }
+                }
+            });
+
         }
     </script>
 {% endblock %}

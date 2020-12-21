@@ -24,6 +24,7 @@ class UserData(models.Model):
     user_name = models.CharField(max_length=20)
     user_email = models.CharField(max_length=100)
     password = models.CharField(max_length=10)
+    email_verified = models.BooleanField()
 
     class Meta:
         db_table = "user"

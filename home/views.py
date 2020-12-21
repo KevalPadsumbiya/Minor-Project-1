@@ -342,15 +342,17 @@ def model(request):
             pass
 
     result2 = zip(amazon_names,amazon_prices,amazon_ratings,amazon_totalratings,amazon_urls)
-    print(amazon_names)
-    print(amazon_prices)
-    print(amazon_ratings)
-    print(amazon_totalratings)
-    print(amazon_urls)
+    # print(amazon_names)
+    # print(amazon_prices)
+    # print(amazon_ratings)
+    # print(amazon_totalratings)
+    # print(amazon_urls)
+    username = get_object_or_404(UserData, user_name = request.session['user_name'])
+    email_verified = username.email_verified
     if request.session.get('user_name', 0) != 0:
-        return render(request,"home/view.html",{'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
+        return render(request,"home/view.html",{'email_verified':email_verified,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
     else:
-        return render(request,"home/view.html",{'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
+        return render(request,"home/view.html",{'email_verified':email_verified,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
 
 def signin(request):
     if request.session.get('user_name',0) == 0 :
@@ -689,23 +691,34 @@ def forgot_validate(request):
         count = UserData.objects.filter(user_email=mail)
         if len(count)==1:
             try:
-                t1 = threading.Thread(target=SendMail, args=(request.POST['mail'],))
-                t1.start()
+                if request.POST['otp_verification'] == '1':
+                    res = ''.join(random.choices(string.digits, k=6))
+                    t1 = threading.Thread(target=SendMail, args=(request.POST['mail'],'1',res))
+                    t1.start()
+                else:
+                    res = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+                    t1 = threading.Thread(target=SendMail, args=(request.POST['mail'],'0',res))
+                    t1.start()
                 # threading.thread.start_new_thread(SendMail,(request.POST['mail']))
-                return JsonResponse({'flag':"yes"},status=200)
+                return JsonResponse({'flag':"yes",'sent_otp':res},status=200)
             except:
                 print('no')
         else:
             return JsonResponse({'flag':"no"},status=200)
     return JsonResponse({'error':""},status=400)
 
-def SendMail(mail):
-    res = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-    send_mail('from help center:', 'your password is : ' + str(res) + '. please keep this for login.',
+def SendMail(mail,otp_verification,res):
+    if otp_verification == '1':
+        # res = ''.join(random.choices(string.digits, k=6))
+        send_mail('OTP', 'OTP for email verification is : '+res+' .',
               settings.EMAIL_HOST_USER, [mail], fail_silently=False)
-    user = UserData.objects.get(user_email=mail)
-    user.password = res
-    user.save()
+    else:   
+        # res = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        send_mail('Your New Password', 'your password is : ' + str(res) + '. please keep this for login.',
+              settings.EMAIL_HOST_USER, [mail], fail_silently=False)
+        user = UserData.objects.get(user_email=mail)
+        user.password = res
+        user.save()
 
 def Admin(request):
     if request.session.get('user_name',0) == 0 :
@@ -864,3 +877,19 @@ def price_filter(request):
             return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
         return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
 
+@csrf_exempt
+def verifyOtp(request):
+    if request.is_ajax() and request.method=="POST":
+        otp = request.POST['entered_otp']
+        sent_otp = request.POST['sent_otp']
+        mail = request.POST['mail']
+        try:
+            user = UserData.objects.get(user_email=mail)
+            user.email_verified = True
+            user.save()
+            return JsonResponse({'flag':"yes"},status=200)
+        except:
+            print('no')
+        else:
+            return JsonResponse({'flag':"no"},status=200)
+    return JsonResponse({'error':""},status=400)
