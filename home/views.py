@@ -64,7 +64,7 @@ def byBrand(request):
     l = ['Mi','Realme','Samsung','OPPO','Apple','Asus','Vivo','Honor','POCO','Micromax','Motorola','Google','HTC','Sony','Huawei','Intex','Nokia','LG','Panasonic','Nubia']
     # l = ['Samsung','Apple','Oneplus','OPPO','Vivo','Asus','Mi','Tecno','POCO','Realme']
     if 'search_text' in request.POST:
-        queryset = list(deviceDetails.objects.filter(mobile_name__contains=request.POST.get('search_text')))
+        queryset = list(deviceDetails.objects.filter(mobile_name__contains=request.POST.get('search_text').strip()))
         text = request.POST.get('search_text')
     elif request.GET.get('brand') in l:
         queryset = list(deviceDetails.objects.filter(brand_name=request.GET.get('brand')))
