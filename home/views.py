@@ -40,18 +40,18 @@ def index(request):
     d["data"] = l
     if request.method == 'POST':
         if request.session.get('user_name',0)!=0 and 'search_text' in request.POST:
-            return render(request, "home/index.html",{'searched': True, 'search_text': request.POST['search_text'], 'list': dumps(d),'login_flag':True,'user_name':request.session['user_name']})
+            return render(request, "home/index.html",{'title':'Price Comparator','searched': True, 'search_text': request.POST['search_text'], 'list': dumps(d),'login_flag':True,'user_name':request.session['user_name']})
         elif request.session.get('user_name',0)!=0:
-            return render(request,"home/index.html",{'login_flag':True,'user_name':request.session['user_name'],'searched':False,'list':dumps(d)})
+            return render(request,"home/index.html",{'title':'Price Comparator','login_flag':True,'user_name':request.session['user_name'],'searched':False,'list':dumps(d)})
         elif 'search_text' in request.POST:
-            return render(request, "home/index.html",{'login_flag': False,'searched': True,'search_text': request.POST['search_text'],'list': dumps(d)})
+            return render(request, "home/index.html",{'title':'Price Comparator','login_flag': False,'searched': True,'search_text': request.POST['search_text'],'list': dumps(d)})
         else:
-            return render(request,"home/index.html",{'login_flag':False,'searched':False,'list':dumps(d)})
+            return render(request,"home/index.html",{'title':'Price Comparator','login_flag':False,'searched':False,'list':dumps(d)})
     else:
         if request.session.get('user_name',0)!=0:
-            return render(request, "home/index.html", {'searched': False, 'list': dumps(d),'login_flag':True,'user_name':request.session['user_name']})
+            return render(request, "home/index.html", {'title':'Price Comparator','searched': False, 'list': dumps(d),'login_flag':True,'user_name':request.session['user_name']})
         else:
-            return render(request,"home/index.html",{'searched' :False,'list':dumps(d),'login_flag':False})
+            return render(request,"home/index.html",{'title':'Price Comparator','searched' :False,'list':dumps(d),'login_flag':False})
 
 
 def byBrand(request):
@@ -71,9 +71,11 @@ def byBrand(request):
         text = request.GET.get('brand')
         # print(request.GET.get('brand'))
     else:
+        text = request.POST.get('brand')
         queryset = list(deviceDetails.objects.filter(mobile_name__startswith=request.POST.get('brand')))
         # text = request.POST.get('search_text')
     # print(queryset)
+    # print(text)
     names = []
     links = []
     p_key = []
@@ -143,10 +145,10 @@ def byBrand(request):
 
     if request.session.get('user_name',0)!=0:
         return render(request, "home/display.html",
-                          {'start':start+1,'end':end,'pages':pages,'cur_page':req_page, 'searched': True, 'search_text': text, 'result': result,
+                          {'title':'Price Comparator | '+text,'start':start+1,'end':end,'pages':pages,'cur_page':req_page, 'searched': True, 'search_text': text, 'result': result,
                            'size': len(names), 'list': dumps(d), 'login_flag':True,'user_name':request.session['user_name']})
     else:
-        return render(request,"home/display.html",{'start':start+1,'end':end,'pages':pages,'cur_page':req_page,'searched' :True,'search_text':text,'result':result,'size':len(names),'list':dumps(d)})
+        return render(request,"home/display.html",{'title':'Price Comparator | '+text,'start':start+1,'end':end,'pages':pages,'cur_page':req_page,'searched' :True,'search_text':text,'result':result,'size':len(names),'list':dumps(d)})
 
 def price_scraper(url):
     r = requests.get(url)
@@ -351,18 +353,18 @@ def model(request):
     if request.session.get('user_name', 0) != 0:
         username = get_object_or_404(UserData, user_name = request.session['user_name'])
         email_verified = username.email_verified
-        return render(request,"home/view.html",{'email_verified':email_verified,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
+        return render(request,"home/view.html",{'title':'Price Comparator | '+device_name,'email_verified':email_verified,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
     else:
-        return render(request,"home/view.html",{'login_flag':False,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
+        return render(request,"home/view.html",{'title':'Price Comparator | '+device_name,'login_flag':False,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
 
 def signin(request):
     if request.session.get('user_name',0) == 0 :
-        return render(request,"home/login.html")
+        return render(request,"home/login.html",{'title':'Price Comparator | signin'})
     return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
 
 def signup(request):
     if request.session.get('user_name',0) == 0 :
-        return render(request,"home/register.html")
+        return render(request,"home/register.html",{'title':'Price Comparator | signup'})
     return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
 
 def compare(request):
@@ -433,9 +435,9 @@ def news(request):
 
     result = zip(desc, news_url, by, image_url)
     if request.session.get('user_name', 0) != 0:
-        return render(request, "home/news.html", {'list':dumps(d),'result': result,'login_flag':True,'user_name':request.session['user_name']})
+        return render(request, "home/news.html", {'title':'Price Comparator | News','list':dumps(d),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:
-        return render(request, "home/news.html", {'list':dumps(d),'result': result})
+        return render(request, "home/news.html", {'title':'Price Comparator | News','list':dumps(d),'result': result})
 
 
 @csrf_exempt
@@ -757,6 +759,9 @@ def updateDB(request):
 
 
 def profile(request):
+    if request.session.get('user_name',0) == 0 :
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
+
     user_object = get_object_or_404(UserData, user_name=request.session['user_name'])
     comments = Comments.objects.filter(username=user_object)
     pk_m=[]
@@ -769,9 +774,10 @@ def profile(request):
         pk_c.append(row.pk)
         mobile_name.append(row.mobile.mobile_name)
         date.append(row.date)
-        comment_text.append(row.comment)
+        comment_text.append('\n'.join(row.comment.split('||||')))
     result = zip(pk_m,pk_c,mobile_name,date,comment_text)
-    return render(request,"home/profile.html",{'result':result})
+    # print("cccc")
+    return render(request,"home/profile.html",{'login_flag':True,'user_name':request.session['user_name'],'search_text':'Your Comments','title':'Price Comparator | Your Comments','result':result})
 
 def price_filter(request):
     if request.method == 'GET':
@@ -875,8 +881,8 @@ def price_filter(request):
         print(time.time()-start_time)
         if request.session.get('user_name', 0) != 0:
 
-            return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
-        return render(request,"home/price_fil.html",{'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
+            return render(request,"home/price_fil.html",{'title':'Price Comparator | '+search_text,'list':dumps(d),'result':result,'len':len(price),'login_flag':True,'user_name':request.session['user_name'],'pages':pages,'searched_text':search_text,'cur_page':req_page,'p':price_range,'start':start+1,'end':end})
+        return render(request,"home/price_fil.html",{'title':'Price Comparator | '+search_text,'list':dumps(d),'result':result,'len':len(price),'cur_page':req_page,'p':price_range,'start':start+1,'end':end,'pages':pages,'searched_text':search_text})
 
 @csrf_exempt
 def verifyOtp(request):

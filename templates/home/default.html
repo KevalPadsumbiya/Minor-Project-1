@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="../../static/img/apple-icon.png">
     <link rel="icon" type="image/png" href="../../static/img/favicon.png">
     <title>
-        Minor Project 1
+        {{title}}
     </title>
      
     <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
@@ -207,7 +207,7 @@
         {
           color:  white;
         }
-        .avail tr:nth-child(even) {background-color: #f2f2f2;}
+        .specs tr:nth-child(even) {background-color: #f2f2f2;}
 
         .loader{
             border:16px solid #f3f3f3;
@@ -365,8 +365,8 @@
                         <span class="nav-link-inner--text">{{ user_name }}</span>
                     </a>
                     <div class="dropdown-menu">
-                        <a href="{% url 'profile' %}" class="dropdown-item">Profile</a>
-                        <a href="{% url 'logout' %}" class="dropdown-item">Log Out</a>
+                        <a href="{% url 'profile' %}" class="dropdown-item">Your Comments</a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
                     </div>
 
                 </li>
@@ -375,7 +375,7 @@
               <span class="btn-inner--icon">
                 <i class="fa fa-sign-in"></i>
               </span>
-                        <span class="nav-link-inner--text" id="login_user">LogIn</span>
+                        <span class="nav-link-inner--text" id="login_user">Sign in/up</span>
                     </a>
                     {% endif %}
                     <a href="#" id="search_button" target="" class="btn btn-neutral btn-icon" onclick="showIt()">
@@ -405,12 +405,12 @@
             <div class="row row-grid align-items-center mb-5">
                 <div class="col-lg-6">
                     <!-- <h3 class="text-primary font-weight-light mb-2">Thank you for supporting us!</h3> -->
-                    <h4 class="text-primary mb-0 font-weight-light">Let's get in touch on any of these platforms.</h4>
+                    <h4 class="text-primary mb-0 font-weight-light">Let's get in touch on this platform.</h4>
                 </div>
                 <div class="col-lg-6 text-lg-center btn-wrapper">
-                    <button onClick="window.open('https://github.com/KevalPadsumbiya/Last')" class="btn btn-icon-only" style="background: red;">
+                    <!-- <button onClick="window.open('https://github.com/KevalPadsumbiya/Last')" class="btn btn-icon-only" style="background: red;">
                         <span class="btn-inner--icon"><i class="fa fa-google" style="color: white;"></i></span>
-                    </button>
+                    </button> -->
                     <!-- <button target="_blank" href="https://www.facebook.com/CreativeTim/" rel="nofollow"
                             class="btn-icon-only rounded-circle btn btn-facebook" data-toggle="tooltip"
                             data-original-title="Like us">
@@ -437,11 +437,19 @@
                 <div class="col-md-6">
                     <ul class="nav nav-footer justify-content-end">
                         <li class="nav-item">
-                            <a href="" class="nav-link" target="_blank">Group 12</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Team
+                              </a>
+                              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="https://www.linkedin.com/in/keval-padsumbiya/" target="_blank">Keval Padsumbiya - 17IT405</a>
+                                <a class="dropdown-item" href="https://www.linkedin.com/in/bhumit-bhadani-45a25b176/" target="_blank">Bhumit Bhadani - 17IT412</a>
+                                <a class="dropdown-item" href="https://www.linkedin.com/in/darpan-davara-869168179/" target="_blank">Darpan Davara - 17IT417</a>
+                                <a class="dropdown-item" href="https://www.linkedin.com/in/prashant-khunt-7a5a97194/" target="_blank">Khunt Prashant - 17IT426</a>
+                            <!-- <a href="" class="nav-link" target="_blank">Group 12</a> -->
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="" class="nav-link" target="_blank">About Us</a>
-                        </li>
+                        </li> -->
                         <!-- <li class="nav-item">
                             <a href="" class="nav-link" target="_blank">Blog</a>
                         </li> -->

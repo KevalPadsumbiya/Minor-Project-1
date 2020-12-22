@@ -163,14 +163,18 @@
                     <div class="col px-0">
                         <div class="row align-items-center justify-content-center">
                             <div class="col-lg-6 text-center">
-                                <h1 class="text-white display-1">Welcome</h1>
+                                <h1 class="text-white display-1">Welcome
+                                    {% if login_flag %}
+                                        , {{user_name}}
+                                    {% endif %}
+                                </h1>
                                 <h2 class="display-4 font-weight-normal text-white">The time is right now!</h2>
-                                <div class="btn-wrapper mt-4">
+                                <!-- <div class="btn-wrapper mt-4">
                                     <a href="" class="btn btn-warning btn-icon mt-3 mb-sm-0">
                                         <span class="btn-inner--icon"><i class="fas fa-angle-double-right"></i></span>
                                         <span class="btn-inner--text">View Best Selling Smartphone</span>
                                     </a>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
