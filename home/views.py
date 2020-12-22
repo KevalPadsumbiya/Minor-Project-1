@@ -347,12 +347,13 @@ def model(request):
     # print(amazon_ratings)
     # print(amazon_totalratings)
     # print(amazon_urls)
-    username = get_object_or_404(UserData, user_name = request.session['user_name'])
-    email_verified = username.email_verified
+
     if request.session.get('user_name', 0) != 0:
+        username = get_object_or_404(UserData, user_name = request.session['user_name'])
+        email_verified = username.email_verified
         return render(request,"home/view.html",{'email_verified':email_verified,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'login_flag':True,'user_name':request.session['user_name'],'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2],'spec':l.split('---')})
     else:
-        return render(request,"home/view.html",{'email_verified':email_verified,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
+        return render(request,"home/view.html",{'login_flag':False,'list':dumps(d),'Amazon_result':result2,'Flipkart_result':result1,'count':len(names),'result':result,'pk':model,'name':queryset.split('|||')[1],'image_url':queryset.split('|||')[2][:-1],'spec':l.split('---')})
 
 def signin(request):
     if request.session.get('user_name',0) == 0 :
@@ -452,7 +453,7 @@ def validate_register(request):
         elif len(email_count)>0:
             return JsonResponse({"name":"no", "email": "yes"}, status=200)
         elif len(name_count)==0 and len(email_count)==0:
-            userdata = UserData(user_name = user_name,user_email = user_email,password = user_pass)
+            userdata = UserData(user_name = user_name,user_email = user_email,password = user_pass,email_verified=False)
             userdata.save()
             return JsonResponse({"name":"no", "email": "no"}, status=200)
     return JsonResponse({"error":""}, status=400)

@@ -274,7 +274,7 @@
             &nbsp;Comments <span style="font-size: 35px;" id="num_of_comments">({{count}})</span></h1><br>
         {% if login_flag and email_verified %}
             <button class="btn btn-primary " onclick="makeThisVisible()">Write Comment?</button>
-            {% elif email_verified ==  False%}
+            {% elif email_verified ==  False %}
                 <!-- <b>Please verify your email to comment !</b><br> -->
                 <div class="alert alert-warning" style=" width:90%; color:white; font-size:16px; ">
                     Please verify your email to comment !
@@ -650,8 +650,8 @@
 
                           sent_otp = response['sent_otp'];
                           Swal.fire({
-                            title: 'Please enter otp : '+sent_otp,
-                            html: '<input type="text" id="otp" class="swal2-input" placeholder="OTP ID">',
+                            title: 'Please enter otp',
+                            html: '<input type="text" id="otp" class="swal2-input" placeholder="OTP">',
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: '#d33',
