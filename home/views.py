@@ -383,11 +383,13 @@ def compare(request):
     spec = []
     image_link = []
     p_key = []
+    price = []
     for row in data:
         # p_key.append(row.pk)
         model = str(row.mobile).split('|||')
         temp = deviceDetails.objects.filter(mobile_name = model[1])
         for el in temp:
+            price.append(el.price)
             p_key.append(el.pk)
             break
         # print(str(row.mobile).split('---'))
@@ -396,7 +398,7 @@ def compare(request):
         spec.append(model[3].split('---'))
         # print()
     
-    result = zip(name,spec,image_link,p_key)
+    result = zip(name,spec,image_link,p_key,price)
     if request.session.get('user_name', 0) != 0:
         return render(request, "home/compare.html", {'list':dumps(d),'size':len(name),'result': result,'login_flag':True,'user_name':request.session['user_name']})
     else:

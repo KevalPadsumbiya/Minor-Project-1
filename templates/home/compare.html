@@ -173,7 +173,7 @@
         </center>
     {% endif %}
     <div id="products" class="row view-group" style="padding:10px;">
-        {% for model,spec,image_link,p_key in result %}
+        {% for model,spec,image_link,p_key,price in result %}
         <div class="item col-md-3 col-sm-6" id="{{p_key}}">
             <center>
                 <button class="btn" style="color: white; background:rgb(2, 103, 255)" onclick="removeFromCompare({{p_key}})">Remove</button>
@@ -195,6 +195,7 @@
                         <center><img class="group list-group-image img-fluid" src="{{image_link}}" alt=""/></center>
                     </div>
                 {% endif %}
+                <center><h5>Rs. {{price}}</h5></center>
                 <div class="caption card-body">
                     <div class="row">
                         <div class="col-12">
